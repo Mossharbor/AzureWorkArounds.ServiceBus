@@ -16,7 +16,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
 
         private string lockDurationField;
 
-        private ushort maxSizeInMegabytesField;
+        private long maxSizeInMegabytesField;
 
         private bool requiresDuplicateDetectionField;
 
@@ -28,13 +28,13 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
 
         private string duplicateDetectionHistoryTimeWindowField;
 
-        private byte maxDeliveryCountField;
+        private int maxDeliveryCountField;
 
         private bool enableBatchedOperationsField;
 
-        private ushort sizeInBytesField;
+        private long sizeInBytesField;
 
-        private byte messageCountField;
+        private long messageCountField;
 
         private bool isAnonymousAccessibleField;
 
@@ -75,7 +75,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
         }
 
         /// <remarks/>
-        public ushort MaxSizeInMegabytes
+        public long MaxSizeInMegabytes
         {
             get
             {
@@ -155,7 +155,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
         }
 
         /// <remarks/>
-        public byte MaxDeliveryCount
+        public int MaxDeliveryCount
         {
             get
             {
@@ -181,7 +181,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
         }
 
         /// <remarks/>
-        public ushort SizeInBytes
+        public long SizeInBytes
         {
             get
             {
@@ -194,7 +194,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
         }
 
         /// <remarks/>
-        public byte MessageCount
+        public long MessageCount
         {
             get
             {
@@ -371,19 +371,19 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
     public partial class QueueDescriptionCountDetails
     {
 
-        private byte activeMessageCountField;
+        private long activeMessageCountField;
 
-        private byte deadLetterMessageCountField;
+        private long deadLetterMessageCountField;
 
-        private byte scheduledMessageCountField;
+        private long scheduledMessageCountField;
 
-        private byte transferMessageCountField;
+        private long transferMessageCountField;
 
-        private byte transferDeadLetterMessageCountField;
+        private long transferDeadLetterMessageCountField;
 
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(Namespace = "http://schemas.microsoft.com/netservices/2011/06/servicebus")]
-        public byte ActiveMessageCount
+        public long ActiveMessageCount
         {
             get
             {
@@ -397,7 +397,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
 
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(Namespace = "http://schemas.microsoft.com/netservices/2011/06/servicebus")]
-        public byte DeadLetterMessageCount
+        public long DeadLetterMessageCount
         {
             get
             {
@@ -411,7 +411,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
 
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(Namespace = "http://schemas.microsoft.com/netservices/2011/06/servicebus")]
-        public byte ScheduledMessageCount
+        public long ScheduledMessageCount
         {
             get
             {
@@ -425,7 +425,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
 
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(Namespace = "http://schemas.microsoft.com/netservices/2011/06/servicebus")]
-        public byte TransferMessageCount
+        public long TransferMessageCount
         {
             get
             {
@@ -439,7 +439,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
 
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(Namespace = "http://schemas.microsoft.com/netservices/2011/06/servicebus")]
-        public byte TransferDeadLetterMessageCount
+        public long TransferDeadLetterMessageCount
         {
             get
             {

@@ -16,7 +16,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
 
         private string defaultMessageTimeToLiveField;
 
-        private ushort maxSizeInMegabytesField;
+        private long maxSizeInMegabytesField;
 
         private bool requiresDuplicateDetectionField;
 
@@ -24,7 +24,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
 
         private bool enableBatchedOperationsField;
 
-        private byte sizeInBytesField;
+        private long sizeInBytesField;
 
         private bool filteringMessagesBeforePublishingField;
 
@@ -67,7 +67,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
         }
 
         /// <remarks/>
-        public ushort MaxSizeInMegabytes
+        public long MaxSizeInMegabytes
         {
             get
             {
@@ -120,7 +120,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
         }
 
         /// <remarks/>
-        public byte SizeInBytes
+        public long SizeInBytes
         {
             get
             {

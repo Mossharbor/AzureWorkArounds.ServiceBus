@@ -24,9 +24,9 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
 
         private bool deadLetteringOnFilterEvaluationExceptionsField;
 
-        private byte messageCountField;
+        private long messageCountField;
 
-        private byte maxDeliveryCountField;
+        private int maxDeliveryCountField;
 
         private bool enableBatchedOperationsField;
 
@@ -110,7 +110,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
         }
 
         /// <remarks/>
-        public byte MessageCount
+        public long MessageCount
         {
             get
             {
@@ -123,7 +123,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
         }
 
         /// <remarks/>
-        public byte MaxDeliveryCount
+        public int MaxDeliveryCount
         {
             get
             {

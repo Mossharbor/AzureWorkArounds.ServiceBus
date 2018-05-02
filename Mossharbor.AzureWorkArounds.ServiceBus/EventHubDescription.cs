@@ -14,7 +14,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
     public partial class EventHubDescription
     {
 
-        private byte messageRetentionInDaysField;
+        private long messageRetentionInDaysField;
 
         private object authorizationRulesField;
 
@@ -24,12 +24,12 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
 
         private System.DateTime updatedAtField;
 
-        private byte partitionCountField;
+        private int partitionCountField;
 
         private byte[] partitionIdsField;
 
         /// <remarks/>
-        public byte MessageRetentionInDays
+        public long MessageRetentionInDays
         {
             get
             {
@@ -94,7 +94,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
         }
 
         /// <remarks/>
-        public byte PartitionCount
+        public int PartitionCount
         {
             get
             {
