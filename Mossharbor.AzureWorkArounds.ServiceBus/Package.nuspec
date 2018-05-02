@@ -10,7 +10,7 @@
     <!-- <iconUrl>http://ICON_URL_HERE_OR_DELETE_THIS_LINE</iconUrl> -->
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Implmentations of missing dotnet core Azure Service Bus functionality around Queues/Topics/Subsccriptions/Event Hubs.</description>
-    <releaseNotes>Initial Release</releaseNotes>
+    <releaseNotes>Fixed issues around Description class not parsing larger message queue sizes</releaseNotes>
     <copyright>Copyright 2018 Mossharbor</copyright>
     <tags>ServiceBus dotnetcore</tags>
   </metadata>
