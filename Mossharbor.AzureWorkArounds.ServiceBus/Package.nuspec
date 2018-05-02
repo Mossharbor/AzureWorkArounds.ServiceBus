@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Mossharbor.AzureWorkArounds.ServiceBus</id>
+    <version>1.0.0</version>
+    <authors>M@ J.</authors>
+    <owners>M@ J.</owners>
+    <licenseUrl>https://raw.githubusercontent.com/Mossharbor/AzureWorkArounds.ServiceBus/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/Mossharbor/AzureWorkArounds.ServiceBus</projectUrl>
+    <!-- <iconUrl>http://ICON_URL_HERE_OR_DELETE_THIS_LINE</iconUrl> -->
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Implmentations of missing dotnet core Azure Service Bus functionality around Queues/Topics/Subsccriptions/Event Hubs.</description>
+    <releaseNotes>Initial Release</releaseNotes>
+    <copyright>Copyright 2018 Mossharbor</copyright>
+    <tags>ServiceBus dotnetcore</tags>
+  </metadata>
+  <files>
+    <file src="bin\Debug\**" target="lib/" />
+  </files>
+</package>
