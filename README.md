@@ -1,8 +1,8 @@
 # Mossharbor.AzureWorkArounds.ServiceBus
-The lasted incarnation of the Azure Service Bus Api's (Microsoft.Azure.ServiceBus) are missing functionality that used to exist in the non-dotnet core libaries (mainly WindowsAzure.ServiceBus).  
-This functionality that is missing involves the CRUD operations on Azure Queue's/Topics/Subscriptions and Event Hubs.  
+The last version of the Azure Service Bus Api's (Microsoft.Azure.ServiceBus) are missing functionality that used to exist in the non-dotnet core libaries (mainly WindowsAzure.ServiceBus).  
+This missing functionality involves the CRUD operations on Azure Queue's/Topics/Subscriptions and Event Hubs.  
 
-This library adds those operations back again in a donet standard 2.0 compatible library.
+This library adds those operations back in a donet standard 2.0 compatible library.
 
 you can see a summary of the issue [here](https://github.com/Azure/azure-service-bus-dotnet/issues/65)
 
