@@ -14,22 +14,22 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
     public partial class PartitionDescription
     {
 
-        private byte sizeInBytesField;
+        private long sizeInBytesField;
 
-        private sbyte beginSequenceNumberField;
+        private long beginSequenceNumberField;
 
-        private sbyte endSequenceNumberField;
+        private long endSequenceNumberField;
 
-        private byte incomingBytesPerSecondField;
+        private long incomingBytesPerSecondField;
 
-        private byte outgoingBytesPerSecondField;
+        private long outgoingBytesPerSecondField;
 
-        private sbyte lastEnqueuedOffsetField;
+        private string lastEnqueuedOffsetField;
 
         private System.DateTime lastEnqueuedTimeUtcField;
 
         /// <remarks/>
-        public byte SizeInBytes
+        public long SizeInBytes
         {
             get
             {
@@ -42,7 +42,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
         }
 
         /// <remarks/>
-        public sbyte BeginSequenceNumber
+        public long BeginSequenceNumber
         {
             get
             {
@@ -55,7 +55,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
         }
 
         /// <remarks/>
-        public sbyte EndSequenceNumber
+        public long EndSequenceNumber
         {
             get
             {
@@ -68,7 +68,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
         }
 
         /// <remarks/>
-        public byte IncomingBytesPerSecond
+        public long IncomingBytesPerSecond
         {
             get
             {
@@ -81,7 +81,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
         }
 
         /// <remarks/>
-        public byte OutgoingBytesPerSecond
+        public long OutgoingBytesPerSecond
         {
             get
             {
@@ -94,7 +94,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
         }
 
         /// <remarks/>
-        public sbyte LastEnqueuedOffset
+        public string LastEnqueuedOffset
         {
             get
             {
