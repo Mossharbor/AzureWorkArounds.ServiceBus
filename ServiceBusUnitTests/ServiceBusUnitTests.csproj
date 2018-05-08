@@ -48,6 +48,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EventHubTests.cs" />
     <Compile Include="TestServiceBus.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

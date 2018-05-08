@@ -327,15 +327,25 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
 
         public bool ConsumerGroupExists(string eventHubName, string consumerGroupName, out ConsumerGroupDescription cgd)
         {
+            cgd = null;
             string address, saddress;
             GetConsumerGroupAddressNeeded(eventHubName, consumerGroupName, out address, out saddress);
             using (System.Net.WebClient request = new WebClient())
             {
-                request.AddCommmonHeaders(provider, address);
-                var t = request.DownloadEntryXml(saddress);
-                cgd = t?.content?.ConsumerGroupDescription;
+                try
+                {
+                    request.AddCommmonHeaders(provider, address);
+                    var t = request.DownloadEntryXml(saddress);
+                    cgd = t?.content?.ConsumerGroupDescription;
+                }
+                catch (System.Net.WebException we)
+                {
+                    if ((we.Response as HttpWebResponse).StatusCode == HttpStatusCode.NotFound)
+                        return false;
+                }
             }
             return (cgd != null);
+
         }
 
         public ConsumerGroupDescription GetConsumerGroup(string eventHubName, string consumerGroupName)
