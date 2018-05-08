@@ -2,15 +2,15 @@
 <package >
   <metadata>
     <id>Mossharbor.AzureWorkArounds.ServiceBus</id>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
     <authors>M@ J.</authors>
     <owners>M@ J.</owners>
     <licenseUrl>https://raw.githubusercontent.com/Mossharbor/AzureWorkArounds.ServiceBus/master/LICENSE</licenseUrl>
     <projectUrl>https://github.com/Mossharbor/AzureWorkArounds.ServiceBus</projectUrl>
     <!-- <iconUrl>http://ICON_URL_HERE_OR_DELETE_THIS_LINE</iconUrl> -->
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>Implmentations of missing dotnet core Azure Service Bus functionality around Queues/Topics/Subsccriptions/Event Hubs.</description>
-    <releaseNotes>Fixed issues around Description class not parsing larger message queue sizes</releaseNotes>
+    <description>Implmentations of missing dotnet core Azure Service Bus functionality around Queues, Topics, Subscriptions and Event Hubs.</description>
+    <releaseNotes>Added support for Event Hub ConsumerGroups and Partitions</releaseNotes>
     <copyright>Copyright 2018 Mossharbor</copyright>
     <tags>ServiceBus dotnetcore</tags>
   </metadata>
