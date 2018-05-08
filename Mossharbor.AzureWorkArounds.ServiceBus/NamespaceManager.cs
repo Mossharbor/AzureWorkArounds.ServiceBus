@@ -87,6 +87,24 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
             return (qd != null);
         }
 
+        //
+        // Summary:
+        //     Retrieves a queue from the service namespace.
+        //
+        // Parameters:
+        //   path:
+        //     The path of the queue relative to the service namespace base address.
+        //
+        // Returns:
+        //     A Microsoft.ServiceBus.Messaging.QueueDescription handle to the queue, or a Microsoft.ServiceBus.Messaging.MessagingEntityNotFoundException
+        //     exception if the queue does not exist in the service namespace.
+        public QueueDescription GetQueue(string queueName)
+        {
+            QueueDescription qd;
+            QueueExists(queueName, out qd);
+            return qd;
+        }
+
         /// <summary>Creates a new queue in the service namespace with the given path.</summary>
         /// <param name="queueName">The path of the queue relative to the service namespace base address.</param>
         /// <returns>The <see cref="T:Microsoft.ServiceBus.Messaging.QueueDescription" /> of the newly created queue.</returns>
@@ -132,6 +150,13 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
             }
             // build up the url like this:
             return (td != null);
+        }
+
+        public TopicDescription GetTopic(string topicName)
+        {
+            TopicDescription qd;
+            TopicExists(topicName, out qd);
+            return qd;
         }
 
         /// <summary>Asynchronously creates a new topic inside the service namespace with the given service namespace path.</summary>
@@ -188,6 +213,13 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
             }
             // build up the url like this:
             return (sd != null);
+        }
+
+        public SubscriptionDescription GetSubscription(string topicName, string subscriptionName)
+        {
+            SubscriptionDescription qd;
+            SubscriptionExists(topicName, subscriptionName, out qd);
+            return qd;
         }
 
         /// <summary>Creates a new subscription in the service namespace with the specified topic path and subscription name.</summary>
@@ -252,6 +284,13 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
             return (qd != null);
         }
 
+        public EventHubDescription GetEventHub(string eventHubName)
+        {
+            EventHubDescription qd;
+            EventHubExists(eventHubName, out qd);
+            return qd;
+        }
+
         /// <summary>Deletes an Event Hub.</summary>
         /// <param name="eventHubName">The path to the Event Hub.</param>
         public void DeleteEventHub(string eventHubName)
@@ -299,6 +338,13 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
             return (cgd != null);
         }
 
+        public ConsumerGroupDescription GetConsumerGroup(string eventHubName, string consumerGroupName)
+        {
+            ConsumerGroupDescription qd;
+            ConsumerGroupExists(eventHubName, consumerGroupName, out qd);
+            return qd;
+        }
+        
         //
         // Summary:
         //     Deletes a consumer group.
@@ -330,11 +376,11 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
         public PartitionDescription GetEventHubPartition(string eventHubName, string consumerGroup, string partitionId)
         {
             PartitionDescription pd;
-            DoesPartitionExist(eventHubName, consumerGroup, partitionId, out pd);
+            PartitionExists(eventHubName, consumerGroup, partitionId, out pd);
             return pd;
         }
 
-        public bool DoesPartitionExist(string eventHubName, string consumerGroup, string partitionId, out PartitionDescription pd)
+        public bool PartitionExists(string eventHubName, string consumerGroup, string partitionId, out PartitionDescription pd)
         {
             string address, saddress;
             GetConsumerGroupAddressNeeded(eventHubName, consumerGroup, partitionId, out address, out saddress);
