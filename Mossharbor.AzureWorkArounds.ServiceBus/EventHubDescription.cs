@@ -26,7 +26,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
 
         private int partitionCountField;
 
-        private byte[] partitionIdsField;
+        private string[] partitionIdsField;
 
         /// <remarks/>
         public long MessageRetentionInDays
@@ -109,7 +109,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
         /// <remarks/>
         [System.Xml.Serialization.XmlArrayAttribute()]
         [System.Xml.Serialization.XmlArrayItemAttribute("string", Namespace = "http://schemas.microsoft.com/2003/10/Serialization/Arrays", IsNullable = false)]
-        public byte[] PartitionIds
+        public string[] PartitionIds
         {
             get
             {
