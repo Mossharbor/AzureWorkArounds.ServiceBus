@@ -236,6 +236,8 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
         private QueueDescription queueDescriptionField;
         private SubscriptionDescription subscriptionDescription;
         private EventHubDescription eventHubDescriptionField;
+        private ConsumerGroupDescription consumerGroupDescriptionField;
+        private PartitionDescription partitionDescriptionField;
 
         private string typeField;
 
@@ -293,6 +295,34 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
             }
         }
 
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Namespace = "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect")]
+        public ConsumerGroupDescription ConsumerGroupDescription
+        {
+            get
+            {
+                return this.consumerGroupDescriptionField;
+            }
+            set
+            {
+                this.consumerGroupDescriptionField = value;
+            }
+        }
+
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Namespace = "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect")]
+        public PartitionDescription PartitionDescription
+        {
+            get
+            {
+                return this.partitionDescriptionField;
+            }
+            set
+            {
+                this.partitionDescriptionField = value;
+            }
+        }
+        
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string type

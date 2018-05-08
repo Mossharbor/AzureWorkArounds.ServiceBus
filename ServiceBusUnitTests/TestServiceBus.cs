@@ -94,5 +94,30 @@ namespace ServiceBusUnitTests
                     Assert.Fail("EventHub was not deleted");
             }
         }
+
+        [TestMethod]
+        public void TestConsumerGroup()
+        {
+            string name = "testConsumerGroupEventHub";
+            string consumerGroupName = "consumergroup1";
+            NamespaceManager ns = NamespaceManager.CreateFromConnectionString(eventHubConnectionString);
+            EventHubDescription description = ns.CreateEventHub(name);
+            Assert.IsTrue(null != description);
+            ConsumerGroupDescription cgDescription = ns.CreateConsumerGroup(name, consumerGroupName);
+
+            if (!ns.ConsumerGroupExists(name, consumerGroupName, out cgDescription))
+                Assert.Fail("Consumer Group did not exist");
+            else
+            {
+                Assert.IsTrue(null != cgDescription);
+                ns.DeleteConsumerGroup(name, consumerGroupName);
+                if (ns.ConsumerGroupExists(name, consumerGroupName, out cgDescription))
+                    Assert.Fail("Consumer Group was not deleted");
+
+                ns.DeleteEventHub(name);
+                if (ns.EventHubExists(name, out description))
+                    Assert.Fail("EventHub was not deleted");
+            }
+        }
     }
 }

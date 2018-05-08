@@ -56,7 +56,20 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
             address  =  @"http://" + rootUri + path + "/Subscriptions/" + subscription + "/?api-version=2017-04";
             saddress = @"https://" + rootUri + path + "/Subscriptions/" + subscription + "/?api-version=2017-04";
         }
+        
+        private void GetConsumerGroupAddressNeeded(string path, string consumerGroup, out string address, out string saddress)
+        {
+            string rootUri = endpointAddresses.First().AbsoluteUri.Replace("sb://", "");
+            address = @"http://" + rootUri + path + "/ConsumerGroups/" + consumerGroup + "/?api-version=2017-04";
+            saddress = @"https://" + rootUri + path + "/ConsumerGroups/" + consumerGroup + "/?api-version=2017-04";
+        }
 
+        private void GetConsumerGroupAddressNeeded(string path, string consumerGroup, string partition, out string address, out string saddress)
+        {
+            string rootUri = endpointAddresses.First().AbsoluteUri.Replace("sb://", "");
+            address = @"http://" + rootUri + path + "/ConsumerGroups/" + consumerGroup + "/Partitions/" + partition + "/?api-version=2017-04";
+            saddress = @"https://" + rootUri + path + "/ConsumerGroups/" + consumerGroup + "/Partitions/" + partition + "/?api-version=2017-04";
+        }
 
         /// <summary>Determines whether a queue exists in the service namespace.</summary>
         /// <param name="path">The path of the queue relative to the service namespace base address.</param>
@@ -222,7 +235,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
                 return t?.content?.EventHubDescription;
             }
         }
-
+        
         /// <summary>Indicates whether or not an Event Hub exists.</summary>
         /// <param name="eventHubName">The path to the Event Hub.</param>
         /// <returns>Returns true if the Event Hub exists; otherwise, false.</returns>
@@ -244,6 +257,94 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
         public void DeleteEventHub(string eventHubName)
         {
             DeleteQueue(eventHubName);
+        }
+
+        //
+        // Summary:
+        //     Creates an Event Hubs consumer group using default values, with the specified
+        //     Event Hubs path and a name for the consumer group.
+        //
+        // Parameters:
+        //   eventHubPath:
+        //     The path to the Event Hub.
+        //
+        //   name:
+        //     The name of the consumer group.
+        //
+        // Returns:
+        //     Returns Microsoft.ServiceBus.Messaging.ConsumerGroupDescription.
+        public ConsumerGroupDescription CreateConsumerGroup(string eventHubName, string consumerGroup)
+        {
+            string defaultConsumerGroupDescription = "<?xml version=\"1.0\" encoding=\"utf-8\"?><entry xmlns=\"http://www.w3.org/2005/Atom\"><id>uuid:271cb9d0-4bfa-427c-b474-b6172e46a0e2;id=2</id><title type=\"text\"></title><updated>2018-05-08T01:58:43Z</updated><content type=\"application/atom+xml;type=entry;charset=utf-8\"><ConsumerGroupDescription xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"http://schemas.microsoft.com/netservices/2010/10/servicebus/connect\" /></content></entry>";
+            string address, saddress;
+            GetConsumerGroupAddressNeeded(eventHubName, consumerGroup, out address, out saddress);
+            using (System.Net.WebClient request = new WebClient())
+            {
+                request.AddCommmonHeaders(provider, address, true, true);
+                var t = request.UploadEntryXml(saddress, defaultConsumerGroupDescription);
+                return t?.content?.ConsumerGroupDescription;
+            }
+        }
+
+        public bool ConsumerGroupExists(string eventHubName, string consumerGroupName, out ConsumerGroupDescription cgd)
+        {
+            string address, saddress;
+            GetConsumerGroupAddressNeeded(eventHubName, consumerGroupName, out address, out saddress);
+            using (System.Net.WebClient request = new WebClient())
+            {
+                request.AddCommmonHeaders(provider, address);
+                var t = request.DownloadEntryXml(saddress);
+                cgd = t?.content?.ConsumerGroupDescription;
+            }
+            return (cgd != null);
+        }
+
+        //
+        // Summary:
+        //     Deletes a consumer group.
+        //
+        // Parameters:
+        //   eventHubPath:
+        //     The path to the Event Hub.
+        //
+        //   name:
+        //     The name of the consumer group to delete.
+        public void DeleteConsumerGroup(string eventHubName, string consumerGroupName)
+        {
+            string address, saddress;
+            GetConsumerGroupAddressNeeded(eventHubName, consumerGroupName, out address, out saddress);
+            using (System.Net.WebClient request = new WebClient())
+            {
+                request.AddCommmonHeaders(provider, address, false);
+                request.UploadValues(saddress, "DELETE", new NameValueCollection());
+            }
+        }
+
+        //
+        // Parameters:
+        //   eventHubPath:
+        //
+        //   consumerGroupName:
+        //
+        //   name:
+        public PartitionDescription GetEventHubPartition(string eventHubName, string consumerGroup, string partitionId)
+        {
+            PartitionDescription pd;
+            DoesPartitionExist(eventHubName, consumerGroup, partitionId, out pd);
+            return pd;
+        }
+
+        public bool DoesPartitionExist(string eventHubName, string consumerGroup, string partitionId, out PartitionDescription pd)
+        {
+            string address, saddress;
+            GetConsumerGroupAddressNeeded(eventHubName, consumerGroup, partitionId, out address, out saddress);
+            using (System.Net.WebClient request = new WebClient())
+            {
+                request.AddCommmonHeaders(provider, address);
+                var t = request.DownloadEntryXml(saddress);
+                pd = t?.content?.PartitionDescription;
+            }
+            return (pd != null);
         }
     }
 }
