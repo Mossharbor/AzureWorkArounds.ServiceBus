@@ -1,4 +1,4 @@
-2# Mossharbor.AzureWorkArounds.ServiceBus
+# Mossharbor.AzureWorkArounds.ServiceBus
 The last version of the Azure Service Bus Api's (Microsoft.Azure.ServiceBus) are missing functionality that used to exist in the non-dotnet core libaries (mainly WindowsAzure.ServiceBus).  
 This missing functionality involves the CRUD operations on Azure Queue's/Topics/Subscriptions and Event Hubs.  
 
