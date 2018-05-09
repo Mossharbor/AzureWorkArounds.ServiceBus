@@ -26,6 +26,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
 
         internal void ResetSerialization()
         {
+            MaxSizeInMegabytesSpecified = false;
             EnableExpressSpecified = false;
             EnablePartitioningSpecified = false;
             AutoDeleteOnIdleTimeSpanStringSpecified = false;
@@ -158,9 +159,12 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
                 {
                     throw new ArgumentOutOfRangeException("MaxSizeInMegabytes");
                 }
+                this.MaxSizeInMegabytesSpecified = true;
                 this.maxSizeInMegabytesField = value;
             }
         }
+
+        public bool MaxSizeInMegabytesSpecified { get; set; }
 
         /// <summary>Gets or sets the value indicating if this queue requires duplicate detection.</summary>
         /// <value>true if this queue requires duplicate detection; otherwise, false.</value>
@@ -216,8 +220,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
                 this.defaultMessageTimeToLiveField = XmlConvert.ToTimeSpan(value);
             }
         }
-
-
+        
         [System.Xml.Serialization.XmlIgnore]
         public bool DefaultMessageTimeToLiveTimeSpanStringSpecified { get; set; }
 
