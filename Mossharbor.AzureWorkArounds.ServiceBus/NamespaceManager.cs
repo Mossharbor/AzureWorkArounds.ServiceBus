@@ -185,10 +185,10 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
             {
                 request.AddCommmonHeaders(provider, address);
                 var t = request.DownloadEntryXml(saddress);
-                td = t?.content?.TopicDescription;
+                td = new TopicDescription(t?.content?.TopicDescription);
             }
             // build up the url like this:
-            return (td != null);
+            return (td.xml != null);
         }
 
         public TopicDescription GetTopic(string topicName)
@@ -210,7 +210,46 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
             {
                 request.AddCommmonHeaders(provider, address, true, true);
                 var t = request.UploadEntryXml(saddress, defaultTopicDescription);
-                return t?.content?.TopicDescription;
+                if (null != t && null != t.content && null != t.content.TopicDescription)
+                {
+                    t.content.TopicDescription.ResetSerialization();
+                    t.content.TopicDescription.Path = topicName;
+                }
+                if (null == t?.content?.TopicDescription)
+                    return null;
+                return new TopicDescription(t?.content?.TopicDescription);
+            }
+        }
+
+
+        /// <summary>Enables you to update the queue.</summary>
+        /// <param name="description">A <see cref="T:Microsoft.ServiceBus.Messaging.QueueDescription" /> object describing the queue to be updated.</param>
+        /// <returns>The <see cref="T:Microsoft.ServiceBus.Messaging.QueueDescription" /> of the updated queue.</returns>
+        public TopicDescription UpdateTopic(TopicDescription description)
+        {
+            if (String.IsNullOrWhiteSpace(description.Path))
+                throw new NullReferenceException("Queue Path was snull or empty");
+
+            string address, saddress;
+            GetAddressesNeeded(description.Path, out address, out saddress);
+
+            saddress = saddress.Replace("/?", "?");
+
+            entry toXml = new entry();
+            toXml.id = "uuid:e" + Guid.NewGuid().ToString() + ";id=1";
+            toXml.author = new entryAuthor();
+            toXml.author.name = endpointAddresses.First().Host.Split('.').First();
+            toXml.title = new entryTitle() { type = "text", Value = description.Path };
+            toXml.updated = DateTime.UtcNow;
+            toXml.link = new entryLink() { rel = "self", href = saddress };
+            toXml.content = new entryContent();
+            toXml.content.TopicDescription = description.xml;
+
+            using (System.Net.WebClient request = new WebClient())
+            {
+                request.AddCommmonHeaders(provider, address, true, true, true);
+                var t = request.UploadEntryXml<entry>(saddress, toXml);
+                return new TopicDescription(t?.content?.TopicDescription);
             }
         }
 

@@ -67,5 +67,61 @@ namespace ServiceBusUnitTests
                 ns.DeleteQueue(queueName);
             }
         }
+
+        [TestMethod]
+        public void TopicCreation()
+        {
+            string TopicName = "TestTopicCreation".ToLower();
+            var ns = NamespaceManager.CreateFromConnectionString(TestServiceBus.serviceBusConnectionString);
+            try
+            {
+                TopicDescription initialDesc = ns.CreateTopic(TopicName);
+            }
+            finally
+            {
+                ns.DeleteTopic(TopicName);
+            }
+        }
+
+        [TestMethod]
+        public void TopicModification()
+        {
+            string TopicName = "TopicModification".ToLower() + Guid.NewGuid().ToString().Substring(0, 5);
+            var ns = NamespaceManager.CreateFromConnectionString(TestServiceBus.serviceBusConnectionString);
+            try
+            {
+                TopicDescription initialDesc = ns.CreateTopic(TopicName);
+                initialDesc.DuplicateDetectionHistoryTimeWindow = TimeSpan.FromMinutes(5);
+                TopicDescription retDesc = ns.UpdateTopic(initialDesc);
+                TopicDescription getDesc = ns.GetTopic(TopicName);
+                Assert.IsTrue(getDesc.DuplicateDetectionHistoryTimeWindow == retDesc.DuplicateDetectionHistoryTimeWindow);
+            }
+            finally
+            {
+                ns.DeleteTopic(TopicName);
+            }
+        }
+
+        [TestMethod]
+        public void TopicModification2()
+        {
+            string TopicName = "TopicModification2".ToLower() + Guid.NewGuid().ToString().Substring(0, 5);
+            var ns = NamespaceManager.CreateFromConnectionString(TestServiceBus.serviceBusConnectionString);
+            try
+            {
+                TopicDescription initialDesc = ns.CreateTopic(TopicName);
+                TopicDescription newDesc = new TopicDescription(TopicName);
+                newDesc.DuplicateDetectionHistoryTimeWindow = TimeSpan.FromMinutes(5);
+                TopicDescription retDesc = ns.UpdateTopic(newDesc);
+                TopicDescription getDesc = ns.GetTopic(TopicName);
+                Assert.IsTrue(getDesc.DuplicateDetectionHistoryTimeWindow == retDesc.DuplicateDetectionHistoryTimeWindow);
+                Assert.IsTrue(getDesc.DuplicateDetectionHistoryTimeWindow != initialDesc.DuplicateDetectionHistoryTimeWindow);
+                Assert.IsTrue(getDesc.DuplicateDetectionHistoryTimeWindow == newDesc.DuplicateDetectionHistoryTimeWindow);
+            }
+            finally
+            {
+                ns.DeleteTopic(TopicName);
+            }
+        }
     }
 }

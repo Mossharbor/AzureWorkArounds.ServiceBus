@@ -241,7 +241,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
     public partial class entryContent
     {
 
-        private TopicDescription topicDescriptionField;
+        private TopicDescriptionXml topicDescriptionField;
         private QueueDescriptionXml queueDescriptionField;
         private SubscriptionDescription subscriptionDescription;
         private EventHubDescription eventHubDescriptionField;
@@ -265,7 +265,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
         }
         
         [System.Xml.Serialization.XmlElementAttribute(Namespace = "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect")]
-        public TopicDescription TopicDescription
+        public TopicDescriptionXml TopicDescription
         {
             get
             {

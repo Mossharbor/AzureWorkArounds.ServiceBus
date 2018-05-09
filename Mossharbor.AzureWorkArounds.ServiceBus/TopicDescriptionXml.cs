@@ -14,6 +14,35 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
     [System.Xml.Serialization.XmlRootAttribute(Namespace = "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect", IsNullable = false)]
     public partial class TopicDescriptionXml
     {
+        public TopicDescriptionXml()
+        {
+        }
+
+        /// <summary>Initializes a new instance of the 
+        /// <see cref="T:Microsoft.ServiceBus.Messaging.TopicDescription" /> class with the specified relative path.</summary> 
+        /// <param name="path">Path of the queue relative to the namespace base address.</param>
+        public TopicDescriptionXml(string path)
+        {
+            this.Path = path;
+        }
+
+        internal void ResetSerialization()
+        {
+            IsExpressSpecified = false;
+            FilteringMessagesBeforePublishingSpecified = false;
+            MaxSizeInMegabytesSpecified = false;
+            EnableExpressSpecified = false;
+            EnablePartitioningSpecified = false;
+            AutoDeleteOnIdleTimeSpanStringSpecified = false;
+            SupportOrderingSpecified = false;
+            StatusSpecified = false;
+            IsAnonymousAccessibleSpecified = false;
+            EnableBatchedOperationsSpecified = false;
+            RequiresDuplicateDetectionSpecified = false;
+            DuplicateDetectionHistoryTimeWindowTimeSpanStringSpecified = false;
+            DefaultMessageTimeToLiveTimeSpanStringSpecified = false;
+        }
+
         /// <summary>
         ///   The message time to live default value in bytes
         /// </summary>
@@ -43,6 +72,8 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
 
         private System.DateTime updatedAtField;
 
+        private string pathField;
+         
         private bool? supportOrderingField;
 
         private TimeSpan? autoDeleteOnIdleField;
@@ -53,7 +84,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
 
         private string entityAvailabilityStatusField;
 
-        private bool enableSubscriptionPartitioningField;
+        private bool enableSubscriptionPartitioningField = false;
 
         private bool enableExpressField = false;
 
@@ -103,8 +134,8 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
             }
         }
 
-        /// <summary>Gets or sets the maximum size of the topic in megabytes, which is the size of memory allocated for the queue.</summary>
-        /// <value>The maximum size of the queue in megabytes.</value>
+        /// <summary>Gets or sets the maximum size of the topic in megabytes, which is the size of memory allocated for the topic.</summary>
+        /// <value>The maximum size of the topic in megabytes.</value>
         public long MaxSizeInMegabytes
         {
             get
@@ -124,8 +155,8 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
 
         public bool MaxSizeInMegabytesSpecified { get; set; }
 
-        /// <summary>Gets or sets the value indicating if this queue requires duplicate detection.</summary>
-        /// <value>true if this queue requires duplicate detection; otherwise, false.</value>
+        /// <summary>Gets or sets the value indicating if this topic requires duplicate detection.</summary>
+        /// <value>true if this topic requires duplicate detection; otherwise, false.</value>
         public bool RequiresDuplicateDetection
         {
             get
@@ -235,9 +266,13 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
             }
             set
             {
+                this.FilteringMessagesBeforePublishingSpecified = true;
                 this.filteringMessagesBeforePublishingField = value;
             }
         }
+
+        [System.Xml.Serialization.XmlIgnore]
+        public bool FilteringMessagesBeforePublishingSpecified { get; set; }
 
         /// <summary>Gets or sets a value that indicates whether the message is anonymous accessible.</summary>
         /// <value>true if the message is anonymous accessible; otherwise, false.</value>
@@ -270,9 +305,11 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
             }
         }
 
-        /// <summary>Gets or sets the current status of the queue (enabled or 
+        public bool AuthorizationRulesSpecified { get { return false; } }
+
+        /// <summary>Gets or sets the current status of the topic (enabled or 
         /// disabled). When an entity is disabled, that entity cannot send or receive messages.</summary> 
-        /// <value>The current status of the queue.</value>
+        /// <value>The current status of the topic.</value>
         public EntityStatus Status
         {
             get
@@ -321,15 +358,17 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
         [System.Xml.Serialization.XmlIgnore]
         public bool UpdatedAtSpecified { get { return false; } }
 
-        /// <summary>Gets or sets a value that indicates whether the queue supports ordering.</summary>
-        /// <value>true if the queue supports ordering; otherwise, false.</value>
+        /// <summary>Gets or sets a value that indicates whether the topic supports ordering.</summary>
+        /// <value>true if the topic supports ordering; otherwise, false.</value>
         public bool SupportOrdering
         {
             get
             {
                 if (supportOrderingField.HasValue)
-                    return supportOrderingField.Value;
-                if (!this.EnablePartitioning)
+                {
+                    return supportOrderingField.GetValueOrDefault();
+                }
+                if (!this.EnablePartitioning && !this.EnableSubscriptionPartitioning)
                 {
                     return true;
                 }
@@ -366,8 +405,8 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
         public bool AutoDeleteOnIdleTimeSpanStringSpecified { get; set; }
 
         /// <summary>Gets or sets the 
-        /// <see cref="T:System.TimeSpan" /> idle interval after which the queue is automatically deleted. The minimum duration is 5 minutes.</summary> 
-        /// <value>The auto delete on idle time span for the queue.</value>
+        /// <see cref="T:System.TimeSpan" /> idle interval after which the topic is automatically deleted. The minimum duration is 5 minutes.</summary> 
+        /// <value>The auto delete on idle time span for the topic.</value>
         [System.Xml.Serialization.XmlIgnore]
         public TimeSpan AutoDeleteOnIdle
         {
@@ -386,8 +425,8 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
             }
         }
 
-        /// <summary>Gets or sets a value that indicates whether the queue to be partitioned across multiple message brokers is enabled. </summary>
-        /// <value>true if the queue to be partitioned across multiple message brokers is enabled; otherwise, false.</value>
+        /// <summary>Gets or sets a value that indicates whether the topic to be partitioned across multiple message brokers is enabled. </summary>
+        /// <value>true if the topic to be partitioned across multiple message brokers is enabled; otherwise, false.</value>
         public bool EnablePartitioning
         {
             get
@@ -404,6 +443,28 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
         [System.Xml.Serialization.XmlIgnore]
         public bool EnablePartitioningSpecified { get; set; }
 
+        /// <summary>Gets or sets the name of the topic.</summary>
+        /// <value>The name of the topic.</value>
+        /// <remarks>
+        ///   This is a relative path to the <see cref="P:Microsoft.ServiceBus.NamespaceManager.Address" />.
+        /// </remarks>
+        [System.Xml.Serialization.XmlIgnore]
+        public string Path
+        {
+            get
+            {
+                return this.pathField;
+            }
+            set
+            {
+                if (string.IsNullOrWhiteSpace(value))
+                {
+                    throw new ArgumentException("Path");
+                }
+                this.pathField = value;
+            }
+        }
+
         /// <remarks/>
         public bool IsExpress
         {
@@ -413,10 +474,14 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
             }
             set
             {
+                this.IsExpressSpecified = true;
                 this.isExpressField = value;
             }
         }
 
+        [System.Xml.Serialization.XmlIgnore]
+        public bool IsExpressSpecified { get; set; }
+            
         /// <remarks/>
         public string EntityAvailabilityStatus
         {
@@ -433,7 +498,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
         [System.Xml.Serialization.XmlIgnore]
         public bool EntityAvailabilityStatusSpecified { get { return false; } }
 
-        /// <remarks/>
+        /// <summary> Gets or sets whether partitioning is enabled or disabled. </summary>
         public bool EnableSubscriptionPartitioning
         {
             get
@@ -446,8 +511,11 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
             }
         }
 
+        [System.Xml.Serialization.XmlIgnore]
+        public bool EnableSubscriptionPartitioningSpecified { get; set; }
+
         /// <summary>Gets or sets a value that indicates whether Express Entities are enabled. An 
-        /// express queue holds a message in memory temporarily before writing it to persistent storage.</summary> 
+        /// express topic holds a message in memory temporarily before writing it to persistent storage.</summary> 
         /// <value>true if Express Entities are enabled; otherwise, false.</value>
         public bool EnableExpress
         {
