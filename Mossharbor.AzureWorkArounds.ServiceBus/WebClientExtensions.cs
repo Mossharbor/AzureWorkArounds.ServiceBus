@@ -9,9 +9,17 @@ using System.Threading.Tasks;
 
 namespace Mossharbor.AzureWorkArounds.ServiceBus
 {
+    using System.Xml;
+    using System.Xml.Serialization;
+
     static class WebClientExtensions
     {
         private const string userAgentTemplate = "SERVICEBUS/2017-04(api-origin=DotNetSdk;os={0};os-version={1})";
+
+        public sealed class Utf8StringWriter : StringWriter
+        {
+            public override Encoding Encoding => Encoding.UTF8;
+        }
 
         public static entry DownloadEntryXml(this WebClient request, string saddress)
         {
@@ -20,6 +28,24 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
                 return null;
             System.Xml.Serialization.XmlSerializer xs = new System.Xml.Serialization.XmlSerializer(typeof(entry));
             return (entry)xs.Deserialize(new StringReader(response));
+        }
+
+        public static entry UploadEntryXml<T>(this WebClient request, string saddress, T XmlPayload)
+        {
+            var xmlWriterSettings = new XmlWriterSettings
+            {
+                Indent = true,
+                OmitXmlDeclaration = false,
+                Encoding = Encoding.UTF8
+            };
+
+            //StringBuilder xmlStr = new StringBuilder();
+            Utf8StringWriter sw = new Utf8StringWriter();
+            XmlWriter xw = XmlWriter.Create(sw, xmlWriterSettings);
+
+            System.Xml.Serialization.XmlSerializer xs = new System.Xml.Serialization.XmlSerializer(typeof(T));
+            xs.Serialize(xw, XmlPayload);
+            return request.UploadEntryXml(saddress, sw.ToString());
         }
 
         public static entry UploadEntryXml(this WebClient request, string saddress, string xmlPayload)
@@ -31,12 +57,14 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
             return (entry)xs.Deserialize(new StringReader(response));
         }
 
-        public static void AddCommmonHeaders(this WebClient request, SharedAccessSignatureTokenProvider provider, string address, bool addContentType = true, bool addAnonHeader = false)
+        public static void AddCommmonHeaders(this WebClient request, SharedAccessSignatureTokenProvider provider, string address, bool addContentType = true, bool addAnonHeader = false, bool addIfMatchheader = false)
         { 
             if (addContentType)
                 request.AddContentType();
             if (addAnonHeader)
                 request.Headers.Add("X-MS-ISANONYMOUSACCESSIBLE", "False");
+            if (addIfMatchheader)
+                request.Headers.Add("If-Match", "*");
             request.SetUserAgentHeader();
             request.AddXProcessAtHeader();
             request.AddAuthorizationHeader(provider, address);

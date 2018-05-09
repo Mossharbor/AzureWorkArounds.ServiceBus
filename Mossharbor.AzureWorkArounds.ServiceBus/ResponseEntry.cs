@@ -69,6 +69,9 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
             }
         }
 
+        [System.Xml.Serialization.XmlIgnore]
+        public bool publishedSpecified { get { return false; } }
+
         /// <remarks/>
         public System.DateTime updated
         {
@@ -95,6 +98,9 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
             }
         }
 
+        [System.Xml.Serialization.XmlIgnore]
+        public bool authorSpecified { get { return false; } }
+        
         /// <remarks/>
         public entryLink link
         {
@@ -107,6 +113,9 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
                 this.linkField = value;
             }
         }
+
+        [System.Xml.Serialization.XmlIgnore]
+        public bool linkSpecified { get { return false; } }
 
         /// <remarks/>
         public entryContent content
@@ -233,17 +242,17 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
     {
 
         private TopicDescription topicDescriptionField;
-        private QueueDescription queueDescriptionField;
+        private QueueDescriptionXml queueDescriptionField;
         private SubscriptionDescription subscriptionDescription;
         private EventHubDescription eventHubDescriptionField;
         private ConsumerGroupDescription consumerGroupDescriptionField;
         private PartitionDescription partitionDescriptionField;
 
-        private string typeField;
+        private string typeField = "application/xml";
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Namespace = "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect")]
-        public QueueDescription QueueDescription
+        [System.Xml.Serialization.XmlElementAttribute(ElementName="QueueDescription", Namespace = "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect")]
+        public QueueDescriptionXml QueueDescription
         {
             get
             {

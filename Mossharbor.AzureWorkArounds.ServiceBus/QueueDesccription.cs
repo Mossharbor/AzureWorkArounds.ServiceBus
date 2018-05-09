@@ -3,364 +3,256 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 
 namespace Mossharbor.AzureWorkArounds.ServiceBus
 {
-    /// <remarks/>
+    /// <summary>Represents the metadata description of the queue.</summary>
     [System.SerializableAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect")]
     [System.Xml.Serialization.XmlRootAttribute(Namespace = "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect", IsNullable = false)]
     public partial class QueueDescription
     {
-
-        private string lockDurationField;
-
-        private long maxSizeInMegabytesField;
-
-        private bool requiresDuplicateDetectionField;
-
-        private bool requiresSessionField;
-
-        private string defaultMessageTimeToLiveField;
-
-        private bool deadLetteringOnMessageExpirationField;
-
-        private string duplicateDetectionHistoryTimeWindowField;
-
-        private int maxDeliveryCountField;
-
-        private bool enableBatchedOperationsField;
-
-        private long sizeInBytesField;
-
-        private long messageCountField;
-
-        private bool isAnonymousAccessibleField;
-
-        private object authorizationRulesField;
-
-        private string statusField;
-
-        private System.DateTime createdAtField;
-
-        private System.DateTime updatedAtField;
-
-        private System.DateTime accessedAtField;
-
-        private bool supportOrderingField;
-
-        private QueueDescriptionCountDetails countDetailsField;
-
-        private string autoDeleteOnIdleField;
-
-        private bool enablePartitioningField;
-
-        private string entityAvailabilityStatusField;
-
-        private bool enableExpressField;
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(DataType = "duration")]
-        public string LockDuration
+        internal QueueDescriptionXml xml = null;
+        internal QueueDescription(QueueDescriptionXml xml)
         {
-            get
-            {
-                return this.lockDurationField;
-            }
-            set
-            {
-                this.lockDurationField = value;
-            }
+            this.xml = xml;
         }
 
-        /// <remarks/>
+        /// <summary>Initializes a new instance of the 
+        /// <see cref="T:Microsoft.ServiceBus.Messaging.QueueDescription" /> class with the specified relative path.</summary> 
+        /// <param name="path">Path of the queue relative to the namespace base address.</param>
+        public QueueDescription(string path)
+        {
+            this.xml = new QueueDescriptionXml(path);
+        }
+        
+        
+        /// <summary>Gets or sets the duration of a peek lock; that is, the amount of time that the message is locked for other receivers. The maximum value for 
+		/// <see cref="P:Microsoft.ServiceBus.Messaging.QueueDescription.LockDuration" /> is 5 minutes; the default value is 1 minute.</summary> 
+		/// <value>The duration of the lock.</value>
+        public TimeSpan LockDuration
+        {
+            get { return xml.LockDuration; }
+            set { xml.LockDuration = value; }
+        }
+
+        /// <summary>Gets or sets the maximum size of the queue in megabytes, which is the size of memory allocated for the queue.</summary>
+		/// <value>The maximum size of the queue in megabytes.</value>
         public long MaxSizeInMegabytes
         {
-            get
-            {
-                return this.maxSizeInMegabytesField;
-            }
-            set
-            {
-                this.maxSizeInMegabytesField = value;
-            }
+            get { return xml.MaxSizeInMegabytes; }
+            set { xml.MaxSizeInMegabytes = value; }
         }
 
-        /// <remarks/>
+        /// <summary>Gets or sets the value indicating if this queue requires duplicate detection.</summary>
+		/// <value>true if this queue requires duplicate detection; otherwise, false.</value>
         public bool RequiresDuplicateDetection
         {
-            get
-            {
-                return this.requiresDuplicateDetectionField;
-            }
-            set
-            {
-                this.requiresDuplicateDetectionField = value;
-            }
+            get { return xml.RequiresDuplicateDetection; }
+            set { xml.RequiresDuplicateDetection = value; }
         }
 
-        /// <remarks/>
+        /// <summary>Gets or sets a value that indicates whether the queue supports the concept of session.</summary>
+		/// <value>true if the receiver application can only receive from the queue through a 
+		/// <see cref="T:Microsoft.ServiceBus.Messaging.MessageSession" />; false if a queue cannot receive using 
+		/// <see cref="T:Microsoft.ServiceBus.Messaging.MessageSession" />.</value> 
         public bool RequiresSession
         {
-            get
-            {
-                return this.requiresSessionField;
-            }
-            set
-            {
-                this.requiresSessionField = value;
-            }
+            get { return xml.RequiresSession; }
+            set { xml.RequiresSession = value; }
         }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(DataType = "duration")]
-        public string DefaultMessageTimeToLive
+        
+        /// <summary>Gets or sets the default message time to live value. This is the duration after which the message expires, starting from when the message is sent to Service Bus. This is the default value used when 
+		/// <see cref="P:Microsoft.ServiceBus.Messaging.BrokeredMessage.TimeToLive" /> is not set on a message itself.Messages older than their TimeToLive value will expire and no longer be retained in the message store. Subscribers will be unable to receive expired messages.A message can have a lower TimeToLive value than that specified here, but by default TimeToLive is set to 
+		/// <see cref="F:System.TimeSpan.MaxValue" />. Therefore, this property becomes the default time to live value applied to messages.</summary> 
+		/// <value>The default message time to live value.</value>
+        public TimeSpan DefaultMessageTimeToLive
         {
-            get
-            {
-                return this.defaultMessageTimeToLiveField;
-            }
-            set
-            {
-                this.defaultMessageTimeToLiveField = value;
-            }
+            get { return xml.DefaultMessageTimeToLive; }
+            set { xml.DefaultMessageTimeToLive = value; }
         }
 
-        /// <remarks/>
         public bool DeadLetteringOnMessageExpiration
         {
-            get
-            {
-                return this.deadLetteringOnMessageExpirationField;
-            }
-            set
-            {
-                this.deadLetteringOnMessageExpirationField = value;
-            }
+            get { return xml.DeadLetteringOnMessageExpiration; }
         }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(DataType = "duration")]
-        public string DuplicateDetectionHistoryTimeWindow
+        public string DuplicateDetectionHistoryTimeWindowTimeSpanString
         {
-            get
-            {
-                return this.duplicateDetectionHistoryTimeWindowField;
-            }
-            set
-            {
-                this.duplicateDetectionHistoryTimeWindowField = value;
-            }
+            get { return xml.DuplicateDetectionHistoryTimeWindowTimeSpanString; }
+            set { xml.DuplicateDetectionHistoryTimeWindowTimeSpanString = value; }
         }
 
-        /// <remarks/>
+        /// <summary>Gets or sets the 
+		/// <see cref="T:System.TimeSpan" /> structure that defines the duration of the duplicate detection history. The default value is 10 minutes.</summary> 
+		/// <value>The <see cref="T:System.TimeSpan" /> structure that represents the time windows for duplication detection history.</value>
+        /// TODO should be TimeSpan
+        public TimeSpan DuplicateDetectionHistoryTimeWindow
+        {
+            get { return xml.DuplicateDetectionHistoryTimeWindow; }
+            set { xml.DuplicateDetectionHistoryTimeWindow = value; }
+        }
+
+        /// <summary>Gets or sets the maximum delivery count. A message is automatically deadlettered after this number of deliveries.</summary>
+		/// <value>The number of maximum deliveries.</value>
+		/// The default value is 10.
         public int MaxDeliveryCount
         {
-            get
-            {
-                return this.maxDeliveryCountField;
-            }
-            set
-            {
-                this.maxDeliveryCountField = value;
-            }
+            get { return xml.MaxDeliveryCount; }
+            set { xml.MaxDeliveryCount = value; }
         }
 
-        /// <remarks/>
+        /// <summary>Gets or sets a value that indicates whether server-side batched operations are enabled.</summary>
+        /// <value>true if the batched operations are enabled; otherwise, false.</value>
         public bool EnableBatchedOperations
         {
-            get
-            {
-                return this.enableBatchedOperationsField;
-            }
-            set
-            {
-                this.enableBatchedOperationsField = value;
-            }
+            get { return xml.EnableBatchedOperations; }
+            set { xml.EnableBatchedOperations = value; }
+        }
+
+        /// <summary>Gets or sets a value that indicates whether this queue has dead letter support when a message expires.</summary>
+		/// <value>true if the queue has a dead letter support when a message expires; otherwise, false.</value>
+		public bool EnableDeadLetteringOnMessageExpiration
+        {
+            get { return xml.EnableDeadLetteringOnMessageExpiration; }
+            set { xml.EnableDeadLetteringOnMessageExpiration = value; }
         }
 
         /// <remarks/>
         public long SizeInBytes
         {
-            get
-            {
-                return this.sizeInBytesField;
-            }
-            set
-            {
-                this.sizeInBytesField = value;
-            }
+            get { return xml.SizeInBytes; }
         }
 
         /// <remarks/>
         public long MessageCount
         {
-            get
-            {
-                return this.messageCountField;
-            }
-            set
-            {
-                this.messageCountField = value;
-            }
+            get { return xml.MessageCount; }
         }
 
-        /// <remarks/>
+        /// <summary>Gets or sets a value that indicates whether the message is anonymous accessible.</summary>
+		/// <value>true if the message is anonymous accessible; otherwise, false.</value>
         public bool IsAnonymousAccessible
         {
-            get
-            {
-                return this.isAnonymousAccessibleField;
-            }
-            set
-            {
-                this.isAnonymousAccessibleField = value;
-            }
+            get { return xml.IsAnonymousAccessible; }
+            set { xml.IsAnonymousAccessible = value; }
         }
 
         /// <remarks/>
         public object AuthorizationRules
         {
-            get
-            {
-                return this.authorizationRulesField;
-            }
-            set
-            {
-                this.authorizationRulesField = value;
-            }
+            get { return xml.AuthorizationRules; }
         }
 
-        /// <remarks/>
-        public string Status
+        /// <summary>Gets or sets the current status of the queue (enabled or 
+		/// disabled). When an entity is disabled, that entity cannot send or receive messages.</summary> 
+		/// <value>The current status of the queue.</value>
+        public EntityStatus Status
         {
-            get
-            {
-                return this.statusField;
-            }
-            set
-            {
-                this.statusField = value;
-            }
+            get { return xml.Status; }
+            set { xml.Status = value; }
         }
 
         /// <remarks/>
         public System.DateTime CreatedAt
         {
-            get
-            {
-                return this.createdAtField;
-            }
-            set
-            {
-                this.createdAtField = value;
-            }
+            get { return xml.CreatedAt; }
         }
 
         /// <remarks/>
         public System.DateTime UpdatedAt
         {
-            get
-            {
-                return this.updatedAtField;
-            }
-            set
-            {
-                this.updatedAtField = value;
-            }
+            get { return xml.UpdatedAt; }
         }
 
         /// <remarks/>
         public System.DateTime AccessedAt
         {
-            get
-            {
-                return this.accessedAtField;
-            }
-            set
-            {
-                this.accessedAtField = value;
-            }
+            get { return xml.AccessedAt; }
         }
 
-        /// <remarks/>
+        /// <summary>Gets or sets a value that indicates whether the queue supports ordering.</summary>
+		/// <value>true if the queue supports ordering; otherwise, false.</value>
         public bool SupportOrdering
         {
-            get
-            {
-                return this.supportOrderingField;
-            }
-            set
-            {
-                this.supportOrderingField = value;
-            }
+            get { return xml.SupportOrdering; }
+            set { xml.SupportOrdering = value; }
+        }
+
+        /// <summary>Gets or sets the user metadata.</summary>
+		/// <value>The user metadata.</value>
+		public string UserMetadata
+        {
+            get { return xml.UserMetadata; }
+            set { xml.UserMetadata = value; }
         }
 
         /// <remarks/>
         public QueueDescriptionCountDetails CountDetails
         {
-            get
-            {
-                return this.countDetailsField;
-            }
-            set
-            {
-                this.countDetailsField = value;
-            }
+            get { return new QueueDescriptionCountDetails(xml.CountDetails); }
         }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(DataType = "duration")]
-        public string AutoDeleteOnIdle
+        
+        /// <summary>Gets or sets the 
+		/// <see cref="T:System.TimeSpan" /> idle interval after which the queue is automatically deleted. The minimum duration is 5 minutes.</summary> 
+		/// <value>The auto delete on idle time span for the queue.</value>
+        [System.Xml.Serialization.XmlIgnore]
+        public TimeSpan AutoDeleteOnIdle
         {
-            get
-            {
-                return this.autoDeleteOnIdleField;
-            }
-            set
-            {
-                this.autoDeleteOnIdleField = value;
-            }
+            get { return xml.AutoDeleteOnIdle; }
+            set { xml.AutoDeleteOnIdle = value; }
         }
 
-        /// <remarks/>
+        /// <summary>Gets or sets a value that indicates whether the queue to be partitioned across multiple message brokers is enabled. </summary>
+		/// <value>true if the queue to be partitioned across multiple message brokers is enabled; otherwise, false.</value>
         public bool EnablePartitioning
         {
-            get
-            {
-                return this.enablePartitioningField;
-            }
-            set
-            {
-                this.enablePartitioningField = value;
-            }
+            get { return xml.EnablePartitioning; }
+            set { xml.EnablePartitioning = value; }
+        }
+
+        /// <summary>Gets or sets the name of the queue.</summary>
+		/// <value>The name of the queue.</value>
+		/// <remarks>
+		///   This is a relative path to the <see cref="P:Microsoft.ServiceBus.NamespaceManager.Address" />.
+		/// </remarks>
+        public string Path
+        {
+            get { return xml.Path; }
+            set { xml.Path = value; }
+        }
+
+        /// <summary>Gets or sets the path to the recipient to which the dead lettered message is forwarded.</summary>
+		/// <value>The path to the recipient to which the dead lettered message is forwarded.</value>
+		public string ForwardDeadLetteredMessagesTo
+        {
+            get { return xml.ForwardDeadLetteredMessagesTo; }
+            set { xml.ForwardDeadLetteredMessagesTo = value; }
+        }
+
+        /// <summary>Gets or sets the path to the recipient to which the message is forwarded.</summary>
+		/// <value>The path to the recipient to which the message is forwarded.</value>
+		public string ForwardTo
+        {
+            get { return xml.ForwardTo; }
+            set { xml.ForwardTo = value; }
         }
 
         /// <remarks/>
         public string EntityAvailabilityStatus
         {
-            get
-            {
-                return this.entityAvailabilityStatusField;
-            }
-            set
-            {
-                this.entityAvailabilityStatusField = value;
-            }
+            get { return xml.EntityAvailabilityStatus; }
         }
 
-        /// <remarks/>
+        /// <summary>Gets or sets a value that indicates whether Express Entities are enabled. An 
+		/// express queue holds a message in memory temporarily before writing it to persistent storage.</summary> 
+		/// <value>true if Express Entities are enabled; otherwise, false.</value>
         public bool EnableExpress
         {
-            get
-            {
-                return this.enableExpressField;
-            }
-            set
-            {
-                this.enableExpressField = value;
-            }
+            get { return xml.EnableExpress; }
+            set { xml.EnableExpress = value; }
         }
     }
 
@@ -370,85 +262,40 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect")]
     public partial class QueueDescriptionCountDetails
     {
-
-        private long activeMessageCountField;
-
-        private long deadLetterMessageCountField;
-
-        private long scheduledMessageCountField;
-
-        private long transferMessageCountField;
-
-        private long transferDeadLetterMessageCountField;
+        QueueDescriptionCountDetailsXml xml;
+        internal QueueDescriptionCountDetails(QueueDescriptionCountDetailsXml xml)
+        {
+            this.xml = xml;
+        }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Namespace = "http://schemas.microsoft.com/netservices/2011/06/servicebus")]
         public long ActiveMessageCount
         {
-            get
-            {
-                return this.activeMessageCountField;
-            }
-            set
-            {
-                this.activeMessageCountField = value;
-            }
+            get { return xml.ActiveMessageCount; }
         }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Namespace = "http://schemas.microsoft.com/netservices/2011/06/servicebus")]
         public long DeadLetterMessageCount
         {
-            get
-            {
-                return this.deadLetterMessageCountField;
-            }
-            set
-            {
-                this.deadLetterMessageCountField = value;
-            }
+            get { return xml.DeadLetterMessageCount; }
         }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Namespace = "http://schemas.microsoft.com/netservices/2011/06/servicebus")]
         public long ScheduledMessageCount
         {
-            get
-            {
-                return this.scheduledMessageCountField;
-            }
-            set
-            {
-                this.scheduledMessageCountField = value;
-            }
+            get { return xml.ScheduledMessageCount; }
         }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Namespace = "http://schemas.microsoft.com/netservices/2011/06/servicebus")]
         public long TransferMessageCount
         {
-            get
-            {
-                return this.transferMessageCountField;
-            }
-            set
-            {
-                this.transferMessageCountField = value;
-            }
+            get { return xml.ScheduledMessageCount; }
         }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Namespace = "http://schemas.microsoft.com/netservices/2011/06/servicebus")]
         public long TransferDeadLetterMessageCount
         {
-            get
-            {
-                return this.transferDeadLetterMessageCountField;
-            }
-            set
-            {
-                this.transferDeadLetterMessageCountField = value;
-            }
+            get { return xml.ScheduledMessageCount; }
         }
     }
 }

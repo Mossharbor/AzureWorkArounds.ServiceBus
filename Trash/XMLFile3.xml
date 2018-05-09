@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<entry xmlns="http://www.w3.org/2005/Atom">
+  <id>uuid:e3aac7bd-0743-486a-abe3-d800aafab8c6;id=1</id>
+  <title type="text"></title>
+  <updated>2018-05-09T22:22:22Z</updated>
+  <content type="application/atom+xml;type=entry;charset=utf-8">
+    <QueueDescription xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect">
+      <LockDuration>PT4M</LockDuration>
+    </QueueDescription>
+  </content>
+</entry>

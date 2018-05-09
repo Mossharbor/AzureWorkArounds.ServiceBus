@@ -8,7 +8,7 @@ namespace ServiceBusUnitTests
     [TestClass]
     public class TestServiceBus
     {
-        static string serviceBusConnectionString = @"Endpoint=...YOUR CONNECTION STRING HERE!!";
+        public static string serviceBusConnectionString = @"Endpoint=sb://telagraphytest.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=kCxvZWTdqMCSVjsur+MTiB1J3MwV0p8Cq3eRlZm9HUk=";
          
         [TestMethod]
         public void TestQueue()

@@ -1,0 +1,35 @@
+﻿<entry xmlns="http://www.w3.org/2005/Atom">
+  <id>https://telagraphytest.servicebus.windows.net/TestQueueCreation/?api-version=2017-04</id>
+  <title type="text">TestQueueCreation</title>
+  <published>2018-05-09T17:50:30Z</published>
+  <updated>2018-05-09T17:50:30Z</updated>
+  <author>
+    <name>telagraphytest</name>
+  </author>
+  <link rel="self" href="https://telagraphytest.servicebus.windows.net/TestQueueCreation/?api-version=2017-04"/>
+  <content type="application/xml">
+    <QueueDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+      <LockDuration>PT1M</LockDuration>
+      <MaxSizeInMegabytes>1024</MaxSizeInMegabytes>
+      <RequiresDuplicateDetection>false</RequiresDuplicateDetection>
+      <RequiresSession>false</RequiresSession>
+      <DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive>
+      <DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration>
+      <DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow>
+      <MaxDeliveryCount>10</MaxDeliveryCount>
+      <EnableBatchedOperations>true</EnableBatchedOperations>
+      <SizeInBytes>0</SizeInBytes>
+      <MessageCount>0</MessageCount>
+      <IsAnonymousAccessible>false</IsAnonymousAccessible>
+      <AuthorizationRules></AuthorizationRules>
+      <Status>Active</Status>
+      <CreatedAt>2018-05-09T17:50:30.467Z</CreatedAt>
+      <UpdatedAt>2018-05-09T17:50:30.653Z</UpdatedAt>
+      <SupportOrdering>true</SupportOrdering>
+      <AutoDeleteOnIdle>P10675199DT2H48M5.4775807S</AutoDeleteOnIdle>
+      <EnablePartitioning>false</EnablePartitioning>
+      <EntityAvailabilityStatus>Available</EntityAvailabilityStatus>
+      <EnableExpress>false</EnableExpress>
+    </QueueDescription>
+  </content>
+</entry>

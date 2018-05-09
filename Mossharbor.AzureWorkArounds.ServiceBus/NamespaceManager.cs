@@ -38,7 +38,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
             KeyValueConfigurationManager keyValueConfigurationManager = new KeyValueConfigurationManager(connectionString);
             if (!string.IsNullOrWhiteSpace(keyValueConfigurationManager["EntityPath"]))
             {
-                throw new ArgumentException("connectionString", "UnsupportedConnStr");
+                throw new ArgumentException("connectionString", "Unsupported Connection String");
             }
             return keyValueConfigurationManager.CreateNamespaceManager();
         }
@@ -82,9 +82,9 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
             {
                 request.AddCommmonHeaders(provider, address);
                 var t = request.DownloadEntryXml(saddress);
-                qd = t?.content?.QueueDescription;
+                qd = new QueueDescription(t?.content?.QueueDescription);
             }
-            return (qd != null);
+            return (qd.xml != null);
         }
 
         //
@@ -117,7 +117,46 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
             {
                 request.AddCommmonHeaders(provider, address, true);
                 var t = request.UploadEntryXml(saddress, defaultQueueDescription);
-                return t?.content?.QueueDescription;
+                if (null != t && null != t.content && null != t.content.QueueDescription)
+                {
+                    t.content.QueueDescription.ResetSerialization();
+                    t.content.QueueDescription.Path = queueName;
+                }
+                if (null == t?.content?.QueueDescription)
+                    return null;
+
+                return new QueueDescription(t?.content?.QueueDescription);
+            }
+        }
+
+        /// <summary>Enables you to update the queue.</summary>
+		/// <param name="description">A <see cref="T:Microsoft.ServiceBus.Messaging.QueueDescription" /> object describing the queue to be updated.</param>
+		/// <returns>The <see cref="T:Microsoft.ServiceBus.Messaging.QueueDescription" /> of the updated queue.</returns>
+		public QueueDescription UpdateQueue(QueueDescription description)
+        {
+            if (String.IsNullOrWhiteSpace(description.Path))
+                throw new NullReferenceException("Queue Path was snull or empty");
+
+            string address, saddress;
+            GetAddressesNeeded(description.Path, out address, out saddress);
+
+            saddress = saddress.Replace("/?", "?");
+
+            entry toXml = new entry();
+            toXml.id = "uuid:e"+Guid.NewGuid().ToString()+";id=1";
+            toXml.author = new entryAuthor();
+            toXml.author.name = endpointAddresses.First().Host.Split('.').First();
+            toXml.title = new entryTitle() { type = "text", Value = description.Path };
+            toXml.updated = DateTime.UtcNow;
+            toXml.link = new entryLink() { rel = "self", href = saddress };
+            toXml.content = new entryContent();
+            toXml.content.QueueDescription = description.xml;
+
+            using (System.Net.WebClient request = new WebClient())
+            {
+                request.AddCommmonHeaders(provider, address, true, true, true);
+                var t = request.UploadEntryXml<entry>(saddress, toXml);
+                return new QueueDescription(t?.content?.QueueDescription);
             }
         }
 

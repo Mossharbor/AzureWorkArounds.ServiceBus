@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<entry xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.w3.org/2005/Atom">
+  <id>uuid:e5d21ce20-1b72-4da5-8eec-865aad702bd6;id=1</id>
+  <title type="text">queuemodification2e8472</title>
+  <updated>2018-05-09T22:36:04.3145151Z</updated>
+  <content type="application/xml">
+    <QueueDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect">
+      <LockDuration />
+      <MaxSizeInMegabytes>1024</MaxSizeInMegabytes>
+    </QueueDescription>
+  </content>
+</entry>
