@@ -20,6 +20,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
     public class NamespaceManager
     {
         private IEnumerable<Uri> endpointAddresses;
+
         private SharedAccessSignatureTokenProvider provider;
 
         internal NamespaceManager(IEnumerable<Uri> endpointAddresses, SharedAccessSignatureTokenProvider provider)
@@ -327,6 +328,14 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
             GetAddressesNeeded(topicName, subscriptionName,  out address, out saddress);
             return new SubscriptionDescription(topicName, subscriptionName, Create(defaultSubscriptionDescription, address, saddress)?.SubscriptionDescription);
         }
+        
+        public SubscriptionDescription CreateSubscription(string topicName, string subscriptionName, SqlFilter filter)
+        {
+            SubscriptionDescription description = new SubscriptionDescription(topicName, subscriptionName);
+            description.xml.DefaultRuleDescription = new RuleDescription();
+            description.xml.DefaultRuleDescription.Filter = filter;
+            return CreateSubscription(description);
+        }
 
         public SubscriptionDescription CreateSubscription(SubscriptionDescription description)
         {
@@ -334,7 +343,8 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
             GetAddressesNeeded(description.TopicPath, description.Name, out address, out saddress);
             entry creationEntry = entry.Build(endpointAddresses.First(), description.Name, saddress);
             creationEntry.content.SubscriptionDescription = description.xml;
-            var content = Create(creationEntry.ToXml(), address, saddress);
+            string xml = creationEntry.ToXml();
+            var content = Create(xml, address, saddress);
             var subDesc = new SubscriptionDescription(description.TopicPath, description.Name, content?.SubscriptionDescription);
             if (null != subDesc.xml)
             {

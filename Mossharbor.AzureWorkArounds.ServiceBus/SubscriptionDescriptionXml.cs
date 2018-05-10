@@ -381,6 +381,18 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
             }
         }
 
+        public RuleDescription DefaultRuleDescription
+        {
+            get;
+            set;
+        }
+
+        [System.Xml.Serialization.XmlIgnore]
+        public bool DefaultRuleDescriptionSpecified
+        {
+            get { return null != DefaultRuleDescription; }
+        }
+        
         /// <remarks/>
         public EntityAvailabilityStatus EntityAvailabilityStatus
         {

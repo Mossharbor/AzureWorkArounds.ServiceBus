@@ -52,6 +52,7 @@
     <Compile Include="TestDescriptionsOperations.cs" />
     <Compile Include="TestServiceBus.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestSubscriptionFilters.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
