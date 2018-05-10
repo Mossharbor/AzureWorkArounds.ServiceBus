@@ -4,9 +4,9 @@ This missing functionality involves the CRUD operations on Azure Queue's/Topics/
 
 This library adds those operations back in a donet standard 2.0 compatible library.
 
-you can see a summary of the issue [here](https://github.com/Azure/azure-service-bus-dotnet/issues/65)
+you can see a discussion of the issue [here](https://github.com/Azure/azure-service-bus-dotnet/issues/65)
 
-Install the nuget package:  [Install-Package Mossharbor.AzureWorkArounds.ServiceBus -Version 1.0.3](https://www.nuget.org/packages/Mossharbor.AzureWorkArounds.ServiceBus/1.0.3#)
+Install the nuget package:  [Install-Package Mossharbor.AzureWorkArounds.ServiceBus -Version 1.0.4](https://www.nuget.org/packages/Mossharbor.AzureWorkArounds.ServiceBus/1.0.4#)
 
 *Example:*
 ```cs
