@@ -28,6 +28,44 @@ namespace ServiceBusUnitTests
         }
 
         [TestMethod]
+        public void QueueCreationCustom()
+        {
+            string path = "QueueCreationCustom".ToLower();
+            var ns = NamespaceManager.CreateFromConnectionString(TestServiceBus.serviceBusConnectionString);
+            try
+            {
+                QueueDescription desc = new QueueDescription(path);
+                QueueDescription initialDesc = ns.CreateQueue(desc);
+                QueueDescription exists = null;
+                Assert.IsTrue(ns.QueueExists(path, out exists));
+            }
+            finally
+            {
+                ns.DeleteTopic(path);
+            }
+        }
+
+        [TestMethod]
+        public void QueueCreationCustomDuplicateDetectionHistoryTimeWindow()
+        {
+            string path = "QueueCreationCustomDuplicateDetectionHistoryTimeWindow".ToLower();
+            var ns = NamespaceManager.CreateFromConnectionString(TestServiceBus.serviceBusConnectionString);
+            try
+            {
+                QueueDescription desc = new QueueDescription(path);
+                desc.DuplicateDetectionHistoryTimeWindow = TimeSpan.FromMinutes(3);
+                QueueDescription initialDesc = ns.CreateQueue(desc);
+                QueueDescription exists = null;
+                Assert.IsTrue(ns.QueueExists(path, out exists));
+                Assert.IsTrue(exists.DuplicateDetectionHistoryTimeWindow.TotalMinutes == 3);
+            }
+            finally
+            {
+                ns.DeleteTopic(path);
+            }
+        }
+
+        [TestMethod]
         public void QueueModification()
         {
             string queueName = "QueueModification".ToLower()+Guid.NewGuid().ToString().Substring(0,5);
@@ -76,6 +114,44 @@ namespace ServiceBusUnitTests
             try
             {
                 TopicDescription initialDesc = ns.CreateTopic(TopicName);
+            }
+            finally
+            {
+                ns.DeleteTopic(TopicName);
+            }
+        }
+
+        [TestMethod]
+        public void TopicCreationCustom()
+        {
+            string TopicName = "TopicCreationCustom".ToLower();
+            var ns = NamespaceManager.CreateFromConnectionString(TestServiceBus.serviceBusConnectionString);
+            try
+            {
+                TopicDescription desc = new TopicDescription(TopicName);
+                TopicDescription initialDesc = ns.CreateTopic(desc);
+                TopicDescription exists = null;
+                Assert.IsTrue(ns.TopicExists(TopicName, out exists));
+            }
+            finally
+            {
+                ns.DeleteTopic(TopicName);
+            }
+        }
+
+        [TestMethod]
+        public void TopicCreationCustomSupportOrdering()
+        {
+            string TopicName = "TopicCreationCustomSupportOrdering".ToLower();
+            var ns = NamespaceManager.CreateFromConnectionString(TestServiceBus.serviceBusConnectionString);
+            try
+            {
+                TopicDescription desc = new TopicDescription(TopicName);
+                desc.SupportOrdering = true;
+                TopicDescription initialDesc = ns.CreateTopic(desc);
+                TopicDescription exists = null;
+                Assert.IsTrue(ns.TopicExists(TopicName, out exists));
+                Assert.IsTrue(exists.SupportOrdering);
             }
             finally
             {

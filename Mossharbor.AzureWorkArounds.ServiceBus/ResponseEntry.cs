@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 
 namespace Mossharbor.AzureWorkArounds.ServiceBus
 {
@@ -15,6 +16,35 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
     [System.Xml.Serialization.XmlRootAttribute(Namespace = "http://www.w3.org/2005/Atom", IsNullable = false)]
     public partial class entry
     {
+        internal static entry Build(Uri endpoint, string path, string saddress)
+        {
+            entry toXml = new entry();
+            toXml.id = "uuid:e" + Guid.NewGuid().ToString() + ";id=1";
+            toXml.author = new entryAuthor();
+            toXml.author.name = endpoint.Host.Split('.').First();
+            toXml.title = new entryTitle() { type = "text", Value = path};
+            toXml.updated = DateTime.UtcNow;
+            if (!String.IsNullOrEmpty(saddress))
+                toXml.link = new entryLink() { rel = "self", href = saddress };
+            toXml.content = new entryContent();
+            return toXml;
+        }
+
+        internal string ToXml()
+        {
+            var xmlWriterSettings = new XmlWriterSettings
+            {
+                Indent = true,
+                OmitXmlDeclaration = false,
+                Encoding = Encoding.UTF8
+            };
+
+            Utf8StringWriter sw = new Utf8StringWriter();
+            XmlWriter xw = XmlWriter.Create(sw, xmlWriterSettings);
+            System.Xml.Serialization.XmlSerializer xs = new System.Xml.Serialization.XmlSerializer(typeof(entry));
+            xs.Serialize(xw, this);
+            return sw.ToString();
+        }
 
         private string idField;
 

@@ -26,6 +26,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
 
         internal void ResetSerialization()
         {
+            LockDurationTimeSpanStringSpecified = false;
             MaxSizeInMegabytesSpecified = false;
             EnableExpressSpecified = false;
             EnablePartitioningSpecified = false;
@@ -116,13 +117,13 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
             set
             {
                 this.lockDurationField = XmlConvert.ToTimeSpan(value);
-                LockDurationSpecified = true;
+                LockDurationTimeSpanStringSpecified = true;
             }
         }
 
 
         [System.Xml.Serialization.XmlIgnore]
-        public bool LockDurationSpecified { get; set; }
+        public bool LockDurationTimeSpanStringSpecified { get; set; }
 
         /// <summary>Gets or sets the duration of a peek lock; that is, the amount of time that the message is locked for other receivers. The maximum value for 
         /// <see cref="P:Microsoft.ServiceBus.Messaging.QueueDescription.LockDuration" /> is 5 minutes; the default value is 1 minute.</summary> 
@@ -140,7 +141,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
             }
             set
             {
-                LockDurationSpecified = true;
+                LockDurationTimeSpanStringSpecified = true;
                 this.lockDurationField = new TimeSpan?(value);
             }
         }
@@ -164,6 +165,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
             }
         }
 
+        [System.Xml.Serialization.XmlIgnore]
         public bool MaxSizeInMegabytesSpecified { get; set; }
 
         /// <summary>Gets or sets the value indicating if this queue requires duplicate detection.</summary>

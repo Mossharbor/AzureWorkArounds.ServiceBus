@@ -9,8 +9,8 @@
     <projectUrl>https://github.com/Mossharbor/AzureWorkArounds.ServiceBus</projectUrl>
     <!-- <iconUrl>http://ICON_URL_HERE_OR_DELETE_THIS_LINE</iconUrl> -->
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>Implmentations of missing dotnet core Azure Service Bus NamespaceManager functionality around Queues, Topics, Subscriptions and Event Hubs.</description>
-    <releaseNotes>Added support for Updating Queues and Topics</releaseNotes>
+    <description>Implmentations of missing dotnet core Azure Service Bus NamespaceManager functionality around Topics, Topics, Subscriptions and Event Hubs.</description>
+    <releaseNotes>Added support for Updating Topics and Topics</releaseNotes>
     <copyright>Copyright 2018 Mossharbor</copyright>
     <tags>ServiceBus dotnetcore Azure</tags>
   </metadata>

@@ -15,12 +15,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
     static class WebClientExtensions
     {
         private const string userAgentTemplate = "SERVICEBUS/2017-04(api-origin=DotNetSdk;os={0};os-version={1})";
-
-        public sealed class Utf8StringWriter : StringWriter
-        {
-            public override Encoding Encoding => Encoding.UTF8;
-        }
-
+        
         public static entry DownloadEntryXml(this WebClient request, string saddress)
         {
             string response = request.DownloadString(saddress);
@@ -30,22 +25,9 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
             return (entry)xs.Deserialize(new StringReader(response));
         }
 
-        public static entry UploadEntryXml<T>(this WebClient request, string saddress, T XmlPayload)
+        public static entry UploadEntryXml(this WebClient request, string saddress, entry XmlPayload)
         {
-            var xmlWriterSettings = new XmlWriterSettings
-            {
-                Indent = true,
-                OmitXmlDeclaration = false,
-                Encoding = Encoding.UTF8
-            };
-
-            //StringBuilder xmlStr = new StringBuilder();
-            Utf8StringWriter sw = new Utf8StringWriter();
-            XmlWriter xw = XmlWriter.Create(sw, xmlWriterSettings);
-
-            System.Xml.Serialization.XmlSerializer xs = new System.Xml.Serialization.XmlSerializer(typeof(T));
-            xs.Serialize(xw, XmlPayload);
-            return request.UploadEntryXml(saddress, sw.ToString());
+            return request.UploadEntryXml(saddress, XmlPayload.ToXml());
         }
 
         public static entry UploadEntryXml(this WebClient request, string saddress, string xmlPayload)

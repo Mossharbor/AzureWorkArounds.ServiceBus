@@ -43,18 +43,24 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
             return keyValueConfigurationManager.CreateNamespaceManager();
         }
 
-        private void GetAddressesNeeded(string path, out string address, out string saddress)
+        private void GetAddressesNeeded(string path, out string address, out string saddress, bool changeQuestionmark = false)
         {
             string rootUri = endpointAddresses.First().AbsoluteUri.Replace("sb://", "");
             address = @"http://" + rootUri + path + "/?api-version=2017-04";
             saddress = @"https://" + rootUri + path + "/?api-version=2017-04";
+
+            if (changeQuestionmark)
+                saddress = saddress.Replace("/?", "?");
         }
 
-        private void GetAddressesNeeded(string path,  string subscription, out string address, out string saddress)
+        private void GetAddressesNeeded(string path,  string subscription, out string address, out string saddress, bool changeQuestionmark = false)
         {
             string rootUri = endpointAddresses.First().AbsoluteUri.Replace("sb://", "");
             address  =  @"http://" + rootUri + path + "/Subscriptions/" + subscription + "/?api-version=2017-04";
             saddress = @"https://" + rootUri + path + "/Subscriptions/" + subscription + "/?api-version=2017-04";
+
+            if (changeQuestionmark)
+                saddress = saddress.Replace("/?", "?");
         }
         
         private void GetConsumerGroupAddressNeeded(string path, string consumerGroup, out string address, out string saddress)
@@ -110,23 +116,31 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
         /// <returns>The <see cref="T:Microsoft.ServiceBus.Messaging.QueueDescription" /> of the newly created queue.</returns>
         public QueueDescription CreateQueue(string queueName)
         {
-            string defaultQueueDescription = "<?xml version=\"1.0\" encoding=\"utf-8\"?><entry xmlns=\"http://www.w3.org/2005/Atom\"><id>uuid:1da6bcce-2d91-4f3c-9b08-2d9316089931;id=1</id><title type=\"text\"></title><updated>2018-05-02T05:34:42Z</updated><content type=\"application/atom+xml;type=entry;charset=utf-8\"><QueueDescription xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"http://schemas.microsoft.com/netservices/2010/10/servicebus/connect\" /></content></entry>";
+            string defaultQueueDescriptionXml = "<?xml version=\"1.0\" encoding=\"utf-8\"?><entry xmlns=\"http://www.w3.org/2005/Atom\"><id>uuid:1da6bcce-2d91-4f3c-9b08-2d9316089931;id=1</id><title type=\"text\"></title><updated>2018-05-02T05:34:42Z</updated><content type=\"application/atom+xml;type=entry;charset=utf-8\"><QueueDescription xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"http://schemas.microsoft.com/netservices/2010/10/servicebus/connect\" /></content></entry>";
             string address, saddress;
             GetAddressesNeeded(queueName, out address, out saddress);
-            using (System.Net.WebClient request = new WebClient())
-            {
-                request.AddCommmonHeaders(provider, address, true);
-                var t = request.UploadEntryXml(saddress, defaultQueueDescription);
-                if (null != t && null != t.content && null != t.content.QueueDescription)
-                {
-                    t.content.QueueDescription.ResetSerialization();
-                    t.content.QueueDescription.Path = queueName;
-                }
-                if (null == t?.content?.QueueDescription)
-                    return null;
+            return new QueueDescription(Create(queueName, defaultQueueDescriptionXml, address, saddress)?.QueueDescription);
+        }
 
-                return new QueueDescription(t?.content?.QueueDescription);
+        /// <summary>Creates a new queue in the service namespace with the specified queue description.</summary>
+        /// <param name="description">A 
+        /// <see cref="T:Microsoft.ServiceBus.Messaging.QueueDescription" /> object describing the attributes with which the new queue will be created.</param> 
+        /// <returns>The <see cref="T:Microsoft.ServiceBus.Messaging.QueueDescription" /> of the newly created queue.</returns>
+        public QueueDescription CreateQueue(QueueDescription description)
+        {
+            string queueName = description.Path;
+            string address, saddress;
+            GetAddressesNeeded(queueName, out address, out saddress);
+            entry creationEntry = entry.Build(endpointAddresses.First(), queueName, saddress);
+            creationEntry.content.QueueDescription = description.xml;
+            var content = Create(queueName, creationEntry.ToXml(), address, saddress);
+            var queueDesc = new QueueDescription(content?.QueueDescription);
+            if (null != queueDesc.xml)
+            {
+                queueDesc.xml.ResetSerialization();
+                queueDesc.xml.Path = queueName;
             }
+            return queueDesc;
         }
 
         /// <summary>Enables you to update the queue.</summary>
@@ -138,24 +152,16 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
                 throw new NullReferenceException("Queue Path was snull or empty");
 
             string address, saddress;
-            GetAddressesNeeded(description.Path, out address, out saddress);
+            GetAddressesNeeded(description.Path, out address, out saddress, true);
 
-            saddress = saddress.Replace("/?", "?");
-
-            entry toXml = new entry();
-            toXml.id = "uuid:e"+Guid.NewGuid().ToString()+";id=1";
-            toXml.author = new entryAuthor();
-            toXml.author.name = endpointAddresses.First().Host.Split('.').First();
-            toXml.title = new entryTitle() { type = "text", Value = description.Path };
-            toXml.updated = DateTime.UtcNow;
-            toXml.link = new entryLink() { rel = "self", href = saddress };
-            toXml.content = new entryContent();
+            
+            entry toXml = entry.Build(endpointAddresses.First(), description.Path, saddress);
             toXml.content.QueueDescription = description.xml;
 
             using (System.Net.WebClient request = new WebClient())
             {
                 request.AddCommmonHeaders(provider, address, true, true, true);
-                var t = request.UploadEntryXml<entry>(saddress, toXml);
+                var t = request.UploadEntryXml(saddress, toXml);
                 return new QueueDescription(t?.content?.QueueDescription);
             }
         }
@@ -203,52 +209,62 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
         /// <returns>The asynchronous operation.</returns>
         public TopicDescription CreateTopic(string topicName)
         {
-            string defaultTopicDescription = "<?xml version=\"1.0\" encoding=\"utf-8\"?><entry xmlns=\"http://www.w3.org/2005/Atom\"><id>uuid:bf6e6ef3-d7c5-41a2-a409-7daa5affef08;id=1</id><title type=\"text\"></title><updated>2018-05-02T06:10:07Z</updated><content type=\"application/atom+xml;type=entry;charset=utf-8\"><TopicDescription xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"http://schemas.microsoft.com/netservices/2010/10/servicebus/connect\" /></content></entry>";
             string address, saddress;
             GetAddressesNeeded(topicName, out address, out saddress);
+            string defaultTopicDescriptionXml = "<?xml version=\"1.0\" encoding=\"utf-8\"?><entry xmlns=\"http://www.w3.org/2005/Atom\"><id>uuid:"+Guid.NewGuid().ToString()+";id=1</id><title type=\"text\"></title><updated>2018-05-02T06:10:07Z</updated><content type=\"application/atom+xml;type=entry;charset=utf-8\"><TopicDescription xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"http://schemas.microsoft.com/netservices/2010/10/servicebus/connect\" /></content></entry>";
+            return new TopicDescription(Create(topicName, defaultTopicDescriptionXml, address, saddress)?.TopicDescription);
+        }
+
+        /// <summary>Creates a new topic inside the service namespace with the specified topic description.</summary>
+        /// <param name="topicDescription">A 
+        /// <see cref="T:Microsoft.ServiceBus.Messaging.TopicDescription" /> object describing the attributes with which the new topic will be created.</param> 
+        /// <returns>The <see cref="T:Microsoft.ServiceBus.Messaging.TopicDescription" /> of the newly created topic.</returns>
+        public TopicDescription CreateTopic(TopicDescription topicDescription)
+        {
+            string topicName = topicDescription.Path;
+            string address, saddress;
+            GetAddressesNeeded(topicName, out address, out saddress);
+            entry creationEntry = entry.Build(endpointAddresses.First(), topicName, saddress);
+            creationEntry.content.TopicDescription = topicDescription.xml;
+
+            var content = Create(topicName, creationEntry.ToXml(), address, saddress);
+            var topicDesc = new TopicDescription(content?.TopicDescription);
+            if (null != topicDesc.xml)
+            {
+                topicDesc.xml.ResetSerialization();
+                topicDesc.xml.Path = topicName;
+            }
+            return topicDesc;
+        }
+
+        private entryContent Create(string Path, string xml, string address, string saddress)
+        {
             using (System.Net.WebClient request = new WebClient())
             {
                 request.AddCommmonHeaders(provider, address, true, true);
-                var t = request.UploadEntryXml(saddress, defaultTopicDescription);
-                if (null != t && null != t.content && null != t.content.TopicDescription)
-                {
-                    t.content.TopicDescription.ResetSerialization();
-                    t.content.TopicDescription.Path = topicName;
-                }
-                if (null == t?.content?.TopicDescription)
-                    return null;
-                return new TopicDescription(t?.content?.TopicDescription);
+                var t = request.UploadEntryXml(saddress, xml);
+                return t?.content;
             }
         }
-
-
+        
         /// <summary>Enables you to update the queue.</summary>
         /// <param name="description">A <see cref="T:Microsoft.ServiceBus.Messaging.QueueDescription" /> object describing the queue to be updated.</param>
         /// <returns>The <see cref="T:Microsoft.ServiceBus.Messaging.QueueDescription" /> of the updated queue.</returns>
         public TopicDescription UpdateTopic(TopicDescription description)
         {
             if (String.IsNullOrWhiteSpace(description.Path))
-                throw new NullReferenceException("Queue Path was snull or empty");
+                throw new NullReferenceException("Topic Path was snull or empty");
 
             string address, saddress;
-            GetAddressesNeeded(description.Path, out address, out saddress);
+            GetAddressesNeeded(description.Path, out address, out saddress, true);
 
-            saddress = saddress.Replace("/?", "?");
-
-            entry toXml = new entry();
-            toXml.id = "uuid:e" + Guid.NewGuid().ToString() + ";id=1";
-            toXml.author = new entryAuthor();
-            toXml.author.name = endpointAddresses.First().Host.Split('.').First();
-            toXml.title = new entryTitle() { type = "text", Value = description.Path };
-            toXml.updated = DateTime.UtcNow;
-            toXml.link = new entryLink() { rel = "self", href = saddress };
-            toXml.content = new entryContent();
+            entry toXml = entry.Build(endpointAddresses.First(), description.Path, saddress);
             toXml.content.TopicDescription = description.xml;
 
             using (System.Net.WebClient request = new WebClient())
             {
                 request.AddCommmonHeaders(provider, address, true, true, true);
-                var t = request.UploadEntryXml<entry>(saddress, toXml);
+                var t = request.UploadEntryXml(saddress, toXml);
                 return new TopicDescription(t?.content?.TopicDescription);
             }
         }
