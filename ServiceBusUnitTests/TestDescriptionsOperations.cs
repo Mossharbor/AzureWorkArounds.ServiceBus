@@ -41,7 +41,7 @@ namespace ServiceBusUnitTests
             }
             finally
             {
-                ns.DeleteTopic(path);
+                ns.DeleteQueue(path);
             }
         }
 
@@ -61,7 +61,7 @@ namespace ServiceBusUnitTests
             }
             finally
             {
-                ns.DeleteTopic(path);
+                ns.DeleteQueue(path);
             }
         }
 
@@ -197,6 +197,113 @@ namespace ServiceBusUnitTests
             finally
             {
                 ns.DeleteTopic(TopicName);
+            }
+        }
+
+        [TestMethod]
+        public void SubscriptionCreation()
+        {
+            string topicName = "SubscriptionCreation";
+            string SubscriptionName = "TestSubscriptionCreation".ToLower();
+            var ns = NamespaceManager.CreateFromConnectionString(TestServiceBus.serviceBusConnectionString);
+            try
+            {
+                ns.CreateTopic(topicName);
+                SubscriptionDescription initialDesc = ns.CreateSubscription(topicName, SubscriptionName);
+            }
+            finally
+            {
+                ns.DeleteSubscription(topicName, SubscriptionName);
+                ns.DeleteTopic(topicName);
+            }
+        }
+
+        [TestMethod]
+        public void SubscriptionCreationCustom()
+        {
+            string topicName = "SubscriptionCreationCustom";
+            string path = "SubscriptionCreationCustom".ToLower();
+            var ns = NamespaceManager.CreateFromConnectionString(TestServiceBus.serviceBusConnectionString);
+            try
+            {
+                ns.CreateTopic(topicName);
+                SubscriptionDescription desc = new SubscriptionDescription(topicName, path);
+                SubscriptionDescription initialDesc = ns.CreateSubscription(desc);
+                SubscriptionDescription exists = null;
+                Assert.IsTrue(ns.SubscriptionExists(topicName, path, out exists));
+            }
+            finally
+            {
+                ns.DeleteSubscription(topicName, path);
+                ns.DeleteTopic(topicName);
+            }
+        }
+
+        [TestMethod]
+        public void SubscriptionCreationAutoDeleteOnIdle()
+        {
+            string topicName = "SubscriptionCreationAutoDeleteOnIdle";
+            string path = "SubscriptionCreationAutoDeleteOnIdle".ToLower();
+            var ns = NamespaceManager.CreateFromConnectionString(TestServiceBus.serviceBusConnectionString);
+            try
+            {
+                ns.CreateTopic(topicName);
+                SubscriptionDescription desc = new SubscriptionDescription(topicName, path);
+                desc.AutoDeleteOnIdle = TimeSpan.FromMinutes(6); // min is 5 min
+                SubscriptionDescription initialDesc = ns.CreateSubscription(desc);
+                SubscriptionDescription exists = null;
+                Assert.IsTrue(ns.SubscriptionExists(topicName, path, out exists));
+                Assert.IsTrue(exists.AutoDeleteOnIdle.TotalMinutes == 6);
+            }
+            finally
+            {
+                ns.DeleteTopic(topicName);
+            }
+        }
+
+        [TestMethod]
+        public void SubscriptionModification()
+        {
+            string topicName = "SubscriptionModification";
+            string SubscriptionName = "SubscriptionModification".ToLower() + Guid.NewGuid().ToString().Substring(0, 5);
+            var ns = NamespaceManager.CreateFromConnectionString(TestServiceBus.serviceBusConnectionString);
+            try
+            {
+                ns.CreateTopic(topicName);
+                SubscriptionDescription initialDesc = ns.CreateSubscription(topicName, SubscriptionName);
+                initialDesc.MaxDeliveryCount = 3;
+                SubscriptionDescription retDesc = ns.UpdateSubscription(initialDesc);
+                SubscriptionDescription getDesc = ns.GetSubscription(topicName, SubscriptionName);
+                Assert.IsTrue(getDesc.MaxDeliveryCount == retDesc.MaxDeliveryCount);
+            }
+            finally
+            {
+                ns.DeleteTopic(topicName);
+            }
+        }
+
+        [TestMethod]
+        public void SubscriptionModification2()
+        {
+            string topicName = "SubscriptionModification2";
+            string SubscriptionName = "SubscriptionModification2".ToLower() + Guid.NewGuid().ToString().Substring(0, 5);
+            var ns = NamespaceManager.CreateFromConnectionString(TestServiceBus.serviceBusConnectionString);
+            try
+            {
+                ns.CreateTopic(topicName);
+                SubscriptionDescription initialDesc = ns.CreateSubscription(topicName, SubscriptionName);
+                SubscriptionDescription newDesc = new SubscriptionDescription(topicName, SubscriptionName);
+                initialDesc.MaxDeliveryCount = 3;
+                SubscriptionDescription retDesc = ns.UpdateSubscription(newDesc);
+                SubscriptionDescription getDesc = ns.GetSubscription(topicName, SubscriptionName);
+                Assert.IsTrue(getDesc.MaxDeliveryCount == retDesc.MaxDeliveryCount);
+                Assert.IsTrue(getDesc.MaxDeliveryCount != initialDesc.MaxDeliveryCount);
+                Assert.IsTrue(getDesc.MaxDeliveryCount == newDesc.MaxDeliveryCount);
+            }
+            finally
+            {
+                ns.DeleteSubscription(topicName, SubscriptionName);
+                ns.DeleteTopic(topicName);
             }
         }
     }

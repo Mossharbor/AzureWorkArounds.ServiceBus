@@ -27,4 +27,18 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
         /// <summary>The status of the messaging entity is unknown.</summary>
         Unknown = 99
     }
+
+    public enum EntityAvailabilityStatus
+    {
+        /// <summary>The entity is unknown.</summary>
+        Unknown,
+        /// <summary>The entity is available.</summary>
+        Available,
+        /// <summary>The entity is limited.</summary>
+        Limited,
+        /// <summary>The entity is being restored.</summary>
+        Restoring,
+        /// <summary>The entity is being renamed.</summary>
+        Renaming
+    }
 }

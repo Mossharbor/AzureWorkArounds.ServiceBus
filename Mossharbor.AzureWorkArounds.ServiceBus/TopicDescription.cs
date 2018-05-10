@@ -4,12 +4,15 @@ using System.Text;
 
 namespace Mossharbor.AzureWorkArounds.ServiceBus
 {
+    /// <summary>Represents a description of the topic.</summary>
     public class TopicDescription
     {
         internal TopicDescriptionXml xml = null;
-        internal TopicDescription(TopicDescriptionXml xml)
+        internal TopicDescription(string path, TopicDescriptionXml xml)
         {
             this.xml = xml;
+            if (null != xml)
+                this.xml.Path = path;
         }
 
         /// <summary>Initializes a new instance of the 

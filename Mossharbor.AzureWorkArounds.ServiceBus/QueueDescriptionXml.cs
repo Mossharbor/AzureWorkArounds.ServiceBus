@@ -58,7 +58,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
 
         private TimeSpan? defaultMessageTimeToLiveField;
 
-        private bool deadLetteringOnMessageExpirationField;
+        private bool deadLetteringOnMessageExpirationField = false;
 
         private TimeSpan? duplicateDetectionHistoryTimeWindowField;
 
@@ -120,8 +120,6 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
                 LockDurationTimeSpanStringSpecified = true;
             }
         }
-
-
         [System.Xml.Serialization.XmlIgnore]
         public bool LockDurationTimeSpanStringSpecified { get; set; }
 

@@ -1,111 +1,68 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Mossharbor.AzureWorkArounds.ServiceBus
 {
-    /// <remarks/>
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect")]
-    [System.Xml.Serialization.XmlRootAttribute(Namespace = "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect", IsNullable = false)]
-    public partial class SubscriptionDescription
+    /// <summary>Represents a description of the subscription.</summary>
+    public class SubscriptionDescription
     {
-
-        private string lockDurationField;
-
-        private bool requiresSessionField;
-
-        private string defaultMessageTimeToLiveField;
-
-        private bool deadLetteringOnMessageExpirationField;
-
-        private bool deadLetteringOnFilterEvaluationExceptionsField;
-
-        private long messageCountField;
-
-        private int maxDeliveryCountField;
-
-        private bool enableBatchedOperationsField;
-
-        private string statusField;
-
-        private System.DateTime createdAtField;
-
-        private System.DateTime updatedAtField;
-
-        private System.DateTime accessedAtField;
-
-        private string autoDeleteOnIdleField;
-
-        private string entityAvailabilityStatusField;
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(DataType = "duration")]
-        public string LockDuration
+        internal SubscriptionDescriptionXml xml = null;
+        internal SubscriptionDescription(string topicPath, string subscriptionName, SubscriptionDescriptionXml xml)
         {
-            get
+            this.xml = xml;
+            if (null != xml)
             {
-                return this.lockDurationField;
-            }
-            set
-            {
-                this.lockDurationField = value;
+                this.xml.TopicPath = topicPath;
+                this.xml.Name = subscriptionName;
             }
         }
 
-        /// <remarks/>
+        /// <summary>Initializes a new instance of the <see cref="T:Microsoft.ServiceBus.Messaging.SubscriptionDescription" /> class.</summary>
+		/// <param name="topicPath">The topic name.</param>
+		/// <param name="subscriptionName">The subscription name.</param>
+        public SubscriptionDescription(string topicPath, string subscriptionName)
+        {
+            this.xml = new SubscriptionDescriptionXml(topicPath, subscriptionName);
+        }
+
+        /// <summary>Gets or sets the duration of a peek lock; that is, the amount of time that the message is locked for other receivers. The maximum value for 
+        /// <see cref="P:Microsoft.ServiceBus.Messaging.SubscriptionDescription.LockDuration" /> is 5 minutes; the default value is 1 minute.</summary> 
+        /// <value>The duration of the lock.</value>
+        public TimeSpan LockDuration
+        {
+            get { return this.xml.LockDuration; }
+            set { this.xml.LockDuration = value; }
+        }
+
+
+        /// <summary>Gets or sets a value that indicates whether the subscription supports the concept of session.</summary>
+        /// <value>true if the receiver application can only receive from the queue through a 
+        /// <see cref="T:Microsoft.ServiceBus.Messaging.MessageSession" />; false if a queue cannot receive using 
+        /// <see cref="T:Microsoft.ServiceBus.Messaging.MessageSession" />.</value> 
         public bool RequiresSession
         {
             get
             {
-                return this.requiresSessionField;
+                return this.xml.RequiresSession;
             }
             set
             {
-                this.requiresSessionField = value;
+                this.xml.RequiresSession = value;
             }
         }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(DataType = "duration")]
-        public string DefaultMessageTimeToLive
-        {
-            get
-            {
-                return this.defaultMessageTimeToLiveField;
-            }
-            set
-            {
-                this.defaultMessageTimeToLiveField = value;
-            }
-        }
-
-        /// <remarks/>
-        public bool DeadLetteringOnMessageExpiration
-        {
-            get
-            {
-                return this.deadLetteringOnMessageExpirationField;
-            }
-            set
-            {
-                this.deadLetteringOnMessageExpirationField = value;
-            }
-        }
-
-        /// <remarks/>
+        /// <summary>Gets or sets the value that indicates if a subscription has dead letter support on Filter evaluation exceptions.</summary>
+		/// <value>true if a subscription has dead letter support on Filter evaluation exceptions; otherwise, false.</value>
         public bool DeadLetteringOnFilterEvaluationExceptions
         {
             get
             {
-                return this.deadLetteringOnFilterEvaluationExceptionsField;
+                return this.xml.DeadLetteringOnFilterEvaluationExceptions;
             }
             set
             {
-                this.deadLetteringOnFilterEvaluationExceptionsField = value;
+                this.xml.DeadLetteringOnFilterEvaluationExceptions = value;
             }
         }
 
@@ -114,119 +71,168 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
         {
             get
             {
-                return this.messageCountField;
-            }
-            set
-            {
-                this.messageCountField = value;
+                return this.xml.MessageCount;
             }
         }
 
-        /// <remarks/>
+        /// <summary>Gets or sets the maximum delivery count. A message is automatically deadlettered after this number of deliveries.</summary>
+        /// <value>The number of maximum deliveries.</value>
+        /// The default value is 10.
         public int MaxDeliveryCount
         {
             get
             {
-                return this.maxDeliveryCountField;
+                return this.xml.MaxDeliveryCount;
             }
             set
             {
-                this.maxDeliveryCountField = value;
+                this.xml.MaxDeliveryCount = value;
             }
         }
 
-        /// <remarks/>
+        /// <summary>Gets or sets a value that indicates whether server-side batched operations are enabled.</summary>
+        /// <value>true if the batched operations are enabled; otherwise, false.</value>
         public bool EnableBatchedOperations
         {
             get
             {
-                return this.enableBatchedOperationsField;
+                return this.xml.EnableBatchedOperations;
             }
             set
             {
-                this.enableBatchedOperationsField = value;
+                this.xml.EnableBatchedOperations = value;
             }
         }
-
-        /// <remarks/>
-        public string Status
+        /// <summary>Gets or sets the current status of the subscription (enabled or 
+        /// disabled). When an entity is disabled, that entity cannot send or receive messages.</summary> 
+        /// <value>The current status of the queue.</value>
+        public EntityStatus Status
         {
             get
             {
-                return this.statusField;
+                return this.xml.Status;
             }
             set
             {
-                this.statusField = value;
+                this.xml.Status = value;
             }
         }
-
         /// <remarks/>
         public System.DateTime CreatedAt
         {
             get
             {
-                return this.createdAtField;
-            }
-            set
-            {
-                this.createdAtField = value;
+                return this.xml.CreatedAt;
             }
         }
-
         /// <remarks/>
         public System.DateTime UpdatedAt
         {
             get
             {
-                return this.updatedAtField;
-            }
-            set
-            {
-                this.updatedAtField = value;
+                return this.xml.CreatedAt;
             }
         }
-
         /// <remarks/>
         public System.DateTime AccessedAt
         {
             get
             {
-                return this.accessedAtField;
-            }
-            set
-            {
-                this.accessedAtField = value;
+                return this.xml.CreatedAt;
             }
         }
-
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(DataType = "duration")]
-        public string AutoDeleteOnIdle
+        public EntityAvailabilityStatus EntityAvailabilityStatus
         {
             get
             {
-                return this.autoDeleteOnIdleField;
-            }
-            set
-            {
-                this.autoDeleteOnIdleField = value;
+                return this.xml.EntityAvailabilityStatus;
             }
         }
 
-        /// <remarks/>
-        public string EntityAvailabilityStatus
+        /// <summary>Gets or sets the default message time to live value. This is the duration after which the message expires, starting from when the message is sent to Service Bus. This is the default value used when 
+        /// <see cref="P:Microsoft.ServiceBus.Messaging.BrokeredMessage.TimeToLive" /> is not set on a message itself.Messages older than their TimeToLive value will expire and no longer be retained in the message store. Subscribers will be unable to receive expired messages.A message can have a lower TimeToLive value than that specified here, but by default TimeToLive is set to 
+        /// <see cref="F:System.TimeSpan.MaxValue" />. Therefore, this property becomes the default time to live value applied to messages.</summary> 
+        /// <value>The default message time to live value.</value>
+        public TimeSpan DefaultMessageTimeToLive
         {
             get
             {
-                return this.entityAvailabilityStatusField;
+                return this.xml.DefaultMessageTimeToLive;
             }
             set
             {
-                this.entityAvailabilityStatusField = value;
+                this.xml.DefaultMessageTimeToLive = value;
+            }
+        }
+
+        /// <summary>Gets or sets the value that indicates if a subscription has dead letter support when a message expires.</summary>
+		/// <value>true if a subscription has dead letter support when a message expires; otherwise, false.</value>
+        public bool DeadLetteringOnMessageExpiration
+        {
+            get
+            {
+                return this.xml.RequiresSession;
+            }
+            set
+            {
+                this.xml.RequiresSession = value;
+            }
+        }
+        
+        /// <summary>Gets or sets the value that indicates if a subscription has dead letter support on Filter evaluation exceptions.</summary>
+		/// <value>true if a subscription has dead letter support on Filter evaluation exceptions; otherwise, false.</value>
+		public bool EnableDeadLetteringOnFilterEvaluationExceptions
+        {
+            get
+            {
+                return this.xml.DeadLetteringOnFilterEvaluationExceptions;
+            }
+            set
+            {
+                this.xml.DeadLetteringOnFilterEvaluationExceptions = value;
+            }
+        }
+
+        /// <summary>Gets or sets the name of the Topic</summary>
+        /// <value>The name of the queue.</value>
+        /// <remarks>
+        ///   This is a relative path to the <see cref="P:Microsoft.ServiceBus.NamespaceManager.Address" />.
+        /// </remarks>
+        public string TopicPath
+        {
+            get
+            {
+                return this.xml.TopicPath;
+            }
+        }
+
+        /// <summary>Gets or sets the name of the subscription.</summary>
+        /// <value>The name of the queue.</value>
+        /// <remarks>
+        ///   This is a relative path to the <see cref="P:Microsoft.ServiceBus.NamespaceManager.Address" />.
+        /// </remarks>
+        public string Name
+        {
+            get
+            {
+                return this.xml.Name;
+            }
+        }
+        
+        /// <summary>Gets or sets the 
+        /// <see cref="T:System.TimeSpan" /> idle interval after which the queue is automatically deleted. The minimum duration is 5 minutes.</summary> 
+        /// <value>The auto delete on idle time span for the queue.</value>
+        public TimeSpan AutoDeleteOnIdle
+        {
+            get
+            {
+                return this.xml.AutoDeleteOnIdle;
+            }
+            set
+            {
+                this.xml.AutoDeleteOnIdle = value;
             }
         }
     }
-
-
 }

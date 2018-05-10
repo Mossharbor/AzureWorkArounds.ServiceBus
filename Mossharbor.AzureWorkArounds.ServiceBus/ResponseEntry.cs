@@ -273,7 +273,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
 
         private TopicDescriptionXml topicDescriptionField;
         private QueueDescriptionXml queueDescriptionField;
-        private SubscriptionDescription subscriptionDescription;
+        private SubscriptionDescriptionXml subscriptionDescription;
         private EventHubDescription eventHubDescriptionField;
         private ConsumerGroupDescription consumerGroupDescriptionField;
         private PartitionDescription partitionDescriptionField;
@@ -308,7 +308,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
         }
         
         [System.Xml.Serialization.XmlElementAttribute(Namespace = "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect")]
-        public SubscriptionDescription SubscriptionDescription
+        public SubscriptionDescriptionXml SubscriptionDescription
         {
             get
             {

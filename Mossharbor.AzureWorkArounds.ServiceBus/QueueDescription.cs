@@ -11,9 +11,11 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
     public partial class QueueDescription
     {
         internal QueueDescriptionXml xml = null;
-        internal QueueDescription(QueueDescriptionXml xml)
+        internal QueueDescription(string path, QueueDescriptionXml xml)
         {
             this.xml = xml;
+            if (null != xml)
+                this.xml.Path = path;
         }
 
         /// <summary>Initializes a new instance of the 

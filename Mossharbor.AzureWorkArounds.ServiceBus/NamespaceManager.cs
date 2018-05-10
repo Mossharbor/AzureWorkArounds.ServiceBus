@@ -88,7 +88,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
             {
                 request.AddCommmonHeaders(provider, address);
                 var t = request.DownloadEntryXml(saddress);
-                qd = new QueueDescription(t?.content?.QueueDescription);
+                qd = new QueueDescription(queueName, t?.content?.QueueDescription);
             }
             return (qd.xml != null);
         }
@@ -119,7 +119,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
             string defaultQueueDescriptionXml = "<?xml version=\"1.0\" encoding=\"utf-8\"?><entry xmlns=\"http://www.w3.org/2005/Atom\"><id>uuid:1da6bcce-2d91-4f3c-9b08-2d9316089931;id=1</id><title type=\"text\"></title><updated>2018-05-02T05:34:42Z</updated><content type=\"application/atom+xml;type=entry;charset=utf-8\"><QueueDescription xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"http://schemas.microsoft.com/netservices/2010/10/servicebus/connect\" /></content></entry>";
             string address, saddress;
             GetAddressesNeeded(queueName, out address, out saddress);
-            return new QueueDescription(Create(queueName, defaultQueueDescriptionXml, address, saddress)?.QueueDescription);
+            return new QueueDescription(queueName, Create(defaultQueueDescriptionXml, address, saddress)?.QueueDescription);
         }
 
         /// <summary>Creates a new queue in the service namespace with the specified queue description.</summary>
@@ -133,8 +133,8 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
             GetAddressesNeeded(queueName, out address, out saddress);
             entry creationEntry = entry.Build(endpointAddresses.First(), queueName, saddress);
             creationEntry.content.QueueDescription = description.xml;
-            var content = Create(queueName, creationEntry.ToXml(), address, saddress);
-            var queueDesc = new QueueDescription(content?.QueueDescription);
+            var content = Create(creationEntry.ToXml(), address, saddress);
+            var queueDesc = new QueueDescription(description.Path, content?.QueueDescription);
             if (null != queueDesc.xml)
             {
                 queueDesc.xml.ResetSerialization();
@@ -149,7 +149,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
 		public QueueDescription UpdateQueue(QueueDescription description)
         {
             if (String.IsNullOrWhiteSpace(description.Path))
-                throw new NullReferenceException("Queue Path was snull or empty");
+                throw new NullReferenceException("Queue Path was null or empty");
 
             string address, saddress;
             GetAddressesNeeded(description.Path, out address, out saddress, true);
@@ -162,7 +162,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
             {
                 request.AddCommmonHeaders(provider, address, true, true, true);
                 var t = request.UploadEntryXml(saddress, toXml);
-                return new QueueDescription(t?.content?.QueueDescription);
+                return new QueueDescription(description.Path, t?.content?.QueueDescription);
             }
         }
 
@@ -191,7 +191,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
             {
                 request.AddCommmonHeaders(provider, address);
                 var t = request.DownloadEntryXml(saddress);
-                td = new TopicDescription(t?.content?.TopicDescription);
+                td = new TopicDescription(topicName, t?.content?.TopicDescription);
             }
             // build up the url like this:
             return (td.xml != null);
@@ -212,7 +212,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
             string address, saddress;
             GetAddressesNeeded(topicName, out address, out saddress);
             string defaultTopicDescriptionXml = "<?xml version=\"1.0\" encoding=\"utf-8\"?><entry xmlns=\"http://www.w3.org/2005/Atom\"><id>uuid:"+Guid.NewGuid().ToString()+";id=1</id><title type=\"text\"></title><updated>2018-05-02T06:10:07Z</updated><content type=\"application/atom+xml;type=entry;charset=utf-8\"><TopicDescription xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"http://schemas.microsoft.com/netservices/2010/10/servicebus/connect\" /></content></entry>";
-            return new TopicDescription(Create(topicName, defaultTopicDescriptionXml, address, saddress)?.TopicDescription);
+            return new TopicDescription(topicName, Create(defaultTopicDescriptionXml, address, saddress)?.TopicDescription);
         }
 
         /// <summary>Creates a new topic inside the service namespace with the specified topic description.</summary>
@@ -227,8 +227,8 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
             entry creationEntry = entry.Build(endpointAddresses.First(), topicName, saddress);
             creationEntry.content.TopicDescription = topicDescription.xml;
 
-            var content = Create(topicName, creationEntry.ToXml(), address, saddress);
-            var topicDesc = new TopicDescription(content?.TopicDescription);
+            var content = Create(creationEntry.ToXml(), address, saddress);
+            var topicDesc = new TopicDescription(topicDescription.Path, content?.TopicDescription);
             if (null != topicDesc.xml)
             {
                 topicDesc.xml.ResetSerialization();
@@ -237,7 +237,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
             return topicDesc;
         }
 
-        private entryContent Create(string Path, string xml, string address, string saddress)
+        private entryContent Create(string xml, string address, string saddress)
         {
             using (System.Net.WebClient request = new WebClient())
             {
@@ -253,7 +253,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
         public TopicDescription UpdateTopic(TopicDescription description)
         {
             if (String.IsNullOrWhiteSpace(description.Path))
-                throw new NullReferenceException("Topic Path was snull or empty");
+                throw new NullReferenceException("Topic Path was null or empty");
 
             string address, saddress;
             GetAddressesNeeded(description.Path, out address, out saddress, true);
@@ -265,7 +265,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
             {
                 request.AddCommmonHeaders(provider, address, true, true, true);
                 var t = request.UploadEntryXml(saddress, toXml);
-                return new TopicDescription(t?.content?.TopicDescription);
+                return new TopicDescription(description.Path, t?.content?.TopicDescription);
             }
         }
 
@@ -297,7 +297,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
                 try
                 {
                     var t = request.DownloadEntryXml(saddress);
-                    sd = t?.content?.SubscriptionDescription;
+                    sd = new SubscriptionDescription(topicName, subscriptionName, t?.content?.SubscriptionDescription);
                 }
                 catch(WebException we)
                 {
@@ -306,7 +306,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
                 }
             }
             // build up the url like this:
-            return (sd != null);
+            return (sd.xml != null);
         }
 
         public SubscriptionDescription GetSubscription(string topicName, string subscriptionName)
@@ -325,12 +325,47 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
             string defaultSubscriptionDescription = "<?xml version=\"1.0\" encoding=\"utf-8\"?><entry xmlns=\"http://www.w3.org/2005/Atom\"><id>uuid:3b6fad82-0e12-4b56-93c4-fc03a5502765;id=1</id><title type=\"text\"></title><updated>2018-05-02T06:28:58Z</updated><content type=\"application/atom+xml;type=entry;charset=utf-8\"><SubscriptionDescription xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"http://schemas.microsoft.com/netservices/2010/10/servicebus/connect\"><DefaultRuleDescription><Filter i:type=\"TrueFilter\"><SqlExpression>1=1</SqlExpression><CompatibilityLevel>20</CompatibilityLevel></Filter><Action i:type=\"EmptyRuleAction\" /><Name>$Default</Name></DefaultRuleDescription></SubscriptionDescription></content></entry>";
             string address, saddress;
             GetAddressesNeeded(topicName, subscriptionName,  out address, out saddress);
+            return new SubscriptionDescription(topicName, subscriptionName, Create(defaultSubscriptionDescription, address, saddress)?.SubscriptionDescription);
+        }
+
+        public SubscriptionDescription CreateSubscription(SubscriptionDescription description)
+        {
+            string address, saddress;
+            GetAddressesNeeded(description.TopicPath, description.Name, out address, out saddress);
+            entry creationEntry = entry.Build(endpointAddresses.First(), description.Name, saddress);
+            creationEntry.content.SubscriptionDescription = description.xml;
+            var content = Create(creationEntry.ToXml(), address, saddress);
+            var subDesc = new SubscriptionDescription(description.TopicPath, description.Name, content?.SubscriptionDescription);
+            if (null != subDesc.xml)
+            {
+                subDesc.xml.ResetSerialization();
+                subDesc.xml.TopicPath = description.TopicPath;
+                subDesc.xml.Name = description.Name;
+            }
+            return subDesc;
+        }
+
+        public SubscriptionDescription UpdateSubscription(SubscriptionDescription description)
+        {
+            if (String.IsNullOrWhiteSpace(description.TopicPath))
+                throw new NullReferenceException("Topic Path was null or empty");
+            
+            if (String.IsNullOrWhiteSpace(description.Name))
+                throw new NullReferenceException("Name was null or empty");
+
+            string address, saddress;
+            GetAddressesNeeded(description.TopicPath, description.Name, out address, out saddress, true);
+
+            entry toXml = entry.Build(endpointAddresses.First(), description.Name, saddress);
+            toXml.content.SubscriptionDescription = description.xml;
+
             using (System.Net.WebClient request = new WebClient())
             {
-                request.AddCommmonHeaders(provider, address, true, true);
-                var t = request.UploadEntryXml(saddress, defaultSubscriptionDescription);
-                return t?.content?.SubscriptionDescription;
+                request.AddCommmonHeaders(provider, address, true, true, true);
+                var t = request.UploadEntryXml(saddress, toXml);
+                return new SubscriptionDescription(description.TopicPath, description.Name, t?.content?.SubscriptionDescription);
             }
+
         }
 
         /// <summary>Deletes the subscription with the specified topic path and subscription name.</summary>
