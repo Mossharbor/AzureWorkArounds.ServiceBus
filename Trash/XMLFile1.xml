@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<entry xmlns="http://www.w3.org/2005/Atom">
+  <id>uuid:784186c8-9a16-461b-a7e6-9143169989db;id=1</id>
+  <title type="text"></title>
+  <updated>2018-05-11T06:22:48Z</updated>
+  <content type="application/atom+xml;type=entry;charset=utf-8">
+    <SubscriptionDescription xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect">
+      <DefaultRuleDescription>
+        <Filter i:type="CorrelationFilter">
+          <CorrelationId>1234</CorrelationId>
+          <Properties>
+            <KeyValueOfstringanyType>
+              <Key>prop1</Key>
+              <Value xmlns:d7p1="http://www.w3.org/2001/XMLSchema" i:type="d7p1:string">abc</Value>
+            </KeyValueOfstringanyType>
+            <KeyValueOfstringanyType>
+              <Key>prop2</Key>
+              <Value xmlns:d7p1="http://www.w3.org/2001/XMLSchema" i:type="d7p1:string">xyz</Value>
+            </KeyValueOfstringanyType>
+          </Properties>
+        </Filter>
+        <Action i:type="EmptyRuleAction" />
+        <Name>$Default</Name>
+      </DefaultRuleDescription>
+    </SubscriptionDescription>
+  </content>
+</entry>

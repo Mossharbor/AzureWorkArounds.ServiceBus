@@ -9,9 +9,12 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
     [XmlRoot(ElementName = "Filter", DataType = "CorrelationFilter")]
     public class CorrelationFilter : Filter
     {
+        private IDictionary<string, object> properties = new Dictionary<string, object>();
+
         /// <summary>Initializes a new instance of the <see cref="T:Microsoft.ServiceBus.Messaging.CorrelationFilter" /> class with default values.</summary>
 		public CorrelationFilter()
         {
+            this.Type = "CorrelationFilter";
         }
 
         /// <summary>Initializes a new instance of the 
@@ -25,7 +28,11 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
                 throw new ArgumentNullException("correlationId");
             }
             this.CorrelationId = correlationId;
+            this.Type = "CorrelationFilter";
         }
+
+        [XmlAttribute("type", Namespace = "http://www.w3.org/2001/XMLSchema-instance")]
+        public string Type { get; set; }
 
         /// <summary>Gets the content type of the message. </summary>
 		/// <value>The content type of the message.</value>
@@ -89,6 +96,17 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
         {
             get;
             set;
+        }
+
+        /// <summary>Gets the application specific properties of the message.</summary>
+		/// <value>The application specific properties of the message.</value>
+        [XmlIgnore]
+		public IDictionary<string, object> Properties
+        {
+            get
+            {
+                return this.properties;
+            }
         }
     }
 }

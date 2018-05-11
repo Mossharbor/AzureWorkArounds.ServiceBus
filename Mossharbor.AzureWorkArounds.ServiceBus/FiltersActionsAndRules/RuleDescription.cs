@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Xml;
+using System.Xml.Linq;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 
@@ -103,7 +106,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
         {
             get
             {
-                return (SqlFilter)this.filterField;
+                return this.filterField;
             }
             set
             {
@@ -150,14 +153,87 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
         public void ReadXml(XmlReader reader)
         {
             reader.MoveToContent();
-            reader.ReadStartElement();
-            reader.ReadAttributeValue();
-            string typeStr = reader.ReadContentAsString();
-            //[System.Xml.Serialization.XmlInclude(typeof(SqlFilter))]
-            //    [System.Xml.Serialization.XmlInclude(typeof(CorrelationFilter))]
-            //    [System.Xml.Serialization.XmlInclude(typeof(FalseFilter))]
-            //    [System.Xml.Serialization.XmlInclude(typeof(TrueFilter))]
-            throw new NotImplementedException();
+            IEnumerable<XElement> filters = SimpleStreamAxis(reader, new string[] { "Filter", "Action", "CreatedAt", "Name","CorrelationId", "Label", "ContentType", "MessageId", "ReplyTo", "ReplyToSessionId","SessionId","To" }).ToArray();
+
+            var actionElement = filters.FirstOrDefault(p => p.Name.LocalName.Equals("Action"));
+            var actionTypeAttrib = actionElement?.Attributes()?.FirstOrDefault(p => p.Name.LocalName.Equals("type"));
+            switch(actionTypeAttrib?.Value?.ToLower())
+            {
+                case "sqlruleaction":
+                    var expression = actionElement?.Elements(XName.Get("{http://schemas.microsoft.com/netservices/2010/10/servicebus/connect}SqlExpression"));
+                    this.Action = new SqlRuleAction(expression?.First()?.Value);
+                    break;
+
+                case "emptyruleaction":
+                    this.Action = EmptyRuleAction.Default;
+                    break;
+            }
+
+            var createdAtElement = filters.FirstOrDefault(p => p.Name.LocalName.Equals("CreatedAt"));
+            this.CreatedAt = createdAtElement == null ? DateTime.MinValue : DateTime.Parse(createdAtElement.Value);
+
+            var nameElement = filters.FirstOrDefault(p => p.Name.LocalName.Equals("Name"));
+            this.Name = nameElement?.Value;
+
+            foreach (var t in filters.Where(p=>p.Name.LocalName.Equals("Filter")))
+            {
+                var typeAttrib = t.Attributes().FirstOrDefault(p=>p.Name.LocalName.Equals("type"));
+                XmlSerializer serializer = null;
+                switch (typeAttrib.Value.ToLower())
+                {
+                    case "sqlfilter":
+                        var expression = t.Elements(XName.Get("{http://schemas.microsoft.com/netservices/2010/10/servicebus/connect}SqlExpression"));
+                        this.Filter = new SqlFilter(expression?.First().Value);
+                        break;
+
+                    case "correlationfilter":
+                        var correlationId = t.Elements(XName.Get("{http://schemas.microsoft.com/netservices/2010/10/servicebus/connect}CorrelationId"));
+                        var Label = t.Elements(XName.Get("{http://schemas.microsoft.com/netservices/2010/10/servicebus/connect}Label"));
+                        var ContentType = t.Elements(XName.Get("{http://schemas.microsoft.com/netservices/2010/10/servicebus/connect}ContentType"));
+                        var MessageId = t.Elements(XName.Get("{http://schemas.microsoft.com/netservices/2010/10/servicebus/connect}MessageId"));
+                        var ReplyTo = t.Elements(XName.Get("{http://schemas.microsoft.com/netservices/2010/10/servicebus/connect}ReplyTo"));
+                        var ReplyToSessionId = t.Elements(XName.Get("{http://schemas.microsoft.com/netservices/2010/10/servicebus/connect}ReplyToSessionId"));
+                        var SessionId = t.Elements(XName.Get("{http://schemas.microsoft.com/netservices/2010/10/servicebus/connect}SessionId"));
+                        var To = t.Elements(XName.Get("{http://schemas.microsoft.com/netservices/2010/10/servicebus/connect}To"));
+
+                        this.Filter = new CorrelationFilter()
+                        {
+                            CorrelationId = !correlationId.Any() ? null : correlationId?.First()?.Value,
+                            Label = !Label.Any() ? null : Label?.FirstOrDefault()?.Value,
+                            ContentType = !ContentType.Any() ? null : ContentType?.FirstOrDefault()?.Value,
+                            MessageId = !MessageId.Any() ? null : MessageId?.FirstOrDefault()?.Value,
+                            ReplyTo = !ReplyTo.Any() ? null : ReplyTo?.FirstOrDefault()?.Value,
+                            ReplyToSessionId = !ReplyToSessionId.Any() ? null : ReplyToSessionId?.FirstOrDefault()?.Value,
+                            SessionId = !SessionId.Any() ? null : SessionId?.FirstOrDefault()?.Value,
+                            To = !To.Any() ? null : To?.FirstOrDefault()?.Value
+                        };
+                        break;
+                }
+            }
+        }
+
+        static IEnumerable<XElement> SimpleStreamAxis(XmlReader reader, string[] elementNames)
+        {
+            //using (XmlReader reader = XmlReader.Create(inputUrl))
+            {
+                //reader.MoveToContent();
+                while (reader.Read())
+                {
+                    while (reader.NodeType == XmlNodeType.Element)
+                    {
+                        if (elementNames.Contains(reader.Name))
+                        {
+                            XElement el = XNode.ReadFrom(reader) as XElement;
+                            if (el != null)
+                            {
+                                yield return el;
+                            }
+                        }
+                        else
+                            break;
+                    }
+                }
+            }
         }
 
         //

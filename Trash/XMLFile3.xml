@@ -1,11 +1,19 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<entry xmlns="http://www.w3.org/2005/Atom">
-  <id>uuid:e3aac7bd-0743-486a-abe3-d800aafab8c6;id=1</id>
-  <title type="text"></title>
-  <updated>2018-05-09T22:22:22Z</updated>
-  <content type="application/atom+xml;type=entry;charset=utf-8">
-    <QueueDescription xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect">
-      <LockDuration>PT4M</LockDuration>
-    </QueueDescription>
+﻿<entry xml:base="https://telagraphytest.servicebus.windows.net/TestSqlFilter/Subscriptions/testsqlfilter5b33a/Rules/?$skip=0&amp;$top=2147483647&amp;api-version=2017-04">
+  <id>https://telagraphytest.servicebus.windows.net/TestSqlFilter/Subscriptions/testsqlfilter5b33a/Rules/$Default?api-version=2017-04</id>
+  <title type="text">$Default</title>
+  <published>2018-05-11T02:00:28Z</published>
+  <updated>2018-05-11T02:00:28Z</updated>
+  <link rel="self" href="$Default?api-version=2017-04"/>
+  <content type="application/xml">
+    <RuleDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+      <Filter i:type="SqlFilter">
+        <SqlExpression>From LIKE '%Smith'</SqlExpression>
+        <CompatibilityLevel>20</CompatibilityLevel>
+        <Parameters/>
+      </Filter>
+      <Action i:type="EmptyRuleAction"/>
+      <CreatedAt>2018-05-11T02:00:28.6052009Z</CreatedAt>
+      <Name>$Default</Name>
+    </RuleDescription>
   </content>
 </entry>

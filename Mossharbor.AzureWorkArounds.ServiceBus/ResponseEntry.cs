@@ -277,6 +277,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
         private EventHubDescription eventHubDescriptionField;
         private ConsumerGroupDescription consumerGroupDescriptionField;
         private PartitionDescription partitionDescriptionField;
+        private RuleDescription[] ruleDescriptionField;
 
         private string typeField = "application/xml";
 
@@ -373,6 +374,20 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
             set
             {
                 this.typeField = value;
+            }
+        }
+
+        [System.Xml.Serialization.XmlElement("RuleDescription")]
+        public RuleDescription[] RuleDescription
+        {
+
+            get
+            {
+                return this.ruleDescriptionField;
+            }
+            set
+            {
+                this.ruleDescriptionField = value;
             }
         }
     }

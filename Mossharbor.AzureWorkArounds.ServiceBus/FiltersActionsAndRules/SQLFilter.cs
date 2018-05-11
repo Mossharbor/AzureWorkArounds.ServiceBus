@@ -12,6 +12,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
     {
         public SqlFilter()
         {
+            this.Type = "SqlFilter";
         }
 
         /// <summary>Initializes a new instance of the 

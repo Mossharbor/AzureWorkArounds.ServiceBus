@@ -11,6 +11,35 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
         public SqlRuleAction()
         { }
 
+        /// <summary>Initializes a new instance of the 
+        /// <see cref="T:Microsoft.ServiceBus.Messaging.SqlRuleAction" /> class with the specified SQL expression.</summary> 
+        /// <param name="sqlExpression">The SQL expression.</param>
+        public SqlRuleAction(string sqlExpression) : this(sqlExpression, 20)
+        {
+        }
+
+        /// <summary>Initializes a new instance of the 
+        /// <see cref="T:Microsoft.ServiceBus.Messaging.SqlRuleAction" /> class with the specified SQL expression and compatibility level.</summary> 
+        /// <param name="sqlExpression">The SQL expression.</param>
+        /// <param name="compatibilityLevel">Reserved for future use. An integer value showing compatibility level. Currently hard-coded to 20.</param>
+        private SqlRuleAction(string sqlExpression, int compatibilityLevel)
+        {
+            if (string.IsNullOrEmpty(sqlExpression))
+            {
+                throw new ArgumentNullException(sqlExpression);
+            }
+            if (sqlExpression.Length > 1024)
+            {
+                throw new ArgumentOutOfRangeException(sqlExpression);
+            }
+            this.SqlExpression = sqlExpression;
+            this.CompatibilityLevel = compatibilityLevel;
+            this.Type = "SqlRuleAction";
+        }
+
+        [XmlAttribute("type", Namespace = "http://www.w3.org/2001/XMLSchema-instance")]
+        public string Type { get; set; }
+
         private int compatibilityField = 20;
 
         /// <summary>Gets the SQL expression.</summary>
