@@ -445,10 +445,6 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
             {
                 request.AddCommmonHeaders(provider, address, true, false);
                 var t = request.DownloadString(saddress);
-                //int startIndex = t.IndexOf("<entry");
-                //int stopIndex = t.IndexOf("</entry>")+ "</entry>".Length;
-                //string entryStr = t.Substring(startIndex, stopIndex - startIndex);
-                //entryStr = "<entry xmlns=\"http://www.w3.org/2005/Atom\"" + entryStr.Substring("<entry".Length);
                 System.Xml.Serialization.XmlSerializer xs = new System.Xml.Serialization.XmlSerializer(typeof(feed));
                 var feed = (feed)xs.Deserialize(new StringReader(t));
 
