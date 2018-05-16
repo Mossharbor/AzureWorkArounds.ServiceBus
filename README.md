@@ -6,7 +6,7 @@ This library adds those operations back in a donet standard 2.0 compatible libra
 
 you can see a discussion of the issue [here](https://github.com/Azure/azure-service-bus-dotnet/issues/65)
 
-Install the nuget package:  [Install-Package Mossharbor.AzureWorkArounds.ServiceBus -Version 1.0.6](https://www.nuget.org/packages/Mossharbor.AzureWorkArounds.ServiceBus/1.0.6#)
+Install the nuget package:  [Install-Package Mossharbor.AzureWorkArounds.ServiceBus -Version 1.0.7](https://www.nuget.org/packages/Mossharbor.AzureWorkArounds.ServiceBus/1.0.7#)
 
 *Example:*
 ```cs
