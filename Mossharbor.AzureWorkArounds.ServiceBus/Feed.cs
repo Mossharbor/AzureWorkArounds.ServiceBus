@@ -22,7 +22,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
 
         private feedLink linkField;
 
-        private feedEntry entryField;
+        private feedEntry[] entryField;
 
         /// <remarks/>
         public feedTitle title
@@ -77,7 +77,8 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
         }
 
         /// <remarks/>
-        public feedEntry entry
+        [System.Xml.Serialization.XmlElementAttribute("entry")]
+        public feedEntry[] entry
         {
             get
             {
@@ -372,6 +373,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
     {
 
         private RuleDescription[] ruleDescriptionField;
+        private SubscriptionDescriptionXml[] subscriptionDescriptionField;
 
         private string typeField;
 
@@ -386,6 +388,20 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
             set
             {
                 this.ruleDescriptionField = value;
+            }
+        }
+
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("SubscriptionDescription", Namespace = "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect")]
+        public SubscriptionDescriptionXml[] SubscriptionDescription
+        {
+            get
+            {
+                return this.subscriptionDescriptionField;
+            }
+            set
+            {
+                this.subscriptionDescriptionField = value;
             }
         }
 

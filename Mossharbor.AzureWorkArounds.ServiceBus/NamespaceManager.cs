@@ -54,22 +54,31 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
                 saddress = saddress.Replace("/?", "?");
         }
 
-        private void GetAddressesNeeded(string path, string subscription, out string address, out string saddress, bool changeQuestionmark = false, bool includeRules = false)
+        private void GetAddressesNeeded(string path, string subscription, out string address, out string saddress, bool changeQuestionmark = false)
         {
             string rootUri = endpointAddresses.First().AbsoluteUri.Replace("sb://", "");
+            address = @"http://" + rootUri + path + "/Subscriptions/" + subscription + "/?api-version=2017-04";
+            saddress = @"https://" + rootUri + path + "/Subscriptions/" + subscription + "/?api-version=2017-04";
+
+            if (changeQuestionmark)
+                saddress = saddress.Replace("/?", "?");
+        }
+
+        private void GetTopicFeedQueryAddresses(string path, string subscription, out string address, out string saddress)
+        {
+            string rootUri = endpointAddresses.First().AbsoluteUri.Replace("sb://", "");
+            bool includeRules = (null != subscription);
+
             if (!includeRules)
             {
-                address = @"http://" + rootUri + path + "/Subscriptions/" + subscription + "/?api-version=2017-04";
-                saddress = @"https://" + rootUri + path + "/Subscriptions/" + subscription + "/?api-version=2017-04";
+                address = @"http://" + rootUri + path + "/Subscriptions/?$skip=0&$top=2147483647&api-version=2017-04";
+                saddress = @"https://" + rootUri + path + "/Subscriptions/?$skip=0&$top=2147483647&api-version=2017-04";
             }
             else
             {
                 address = @"http://" + rootUri + path + "/Subscriptions/" + subscription + "/Rules/?$skip=0&$top=2147483647&api-version=2017-04";
                 saddress = @"https://" + rootUri + path + "/Subscriptions/" + subscription + "/Rules/?$skip=0&$top=2147483647&api-version=2017-04";
             }
-
-            if (changeQuestionmark)
-                saddress = saddress.Replace("/?", "?");
         }
 
         private void GetConsumerGroupAddressNeeded(string path, string consumerGroup, out string address, out string saddress)
@@ -439,7 +448,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
 		public IEnumerable<RuleDescription> GetRules(string topicName, string subscriptionName)
         {
             string address, saddress;
-            GetAddressesNeeded(topicName, subscriptionName, out address, out saddress, false, true);
+            GetTopicFeedQueryAddresses(topicName, subscriptionName, out address, out saddress);
 
             using (System.Net.WebClient request = new WebClient())
             {
@@ -448,10 +457,54 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
                 System.Xml.Serialization.XmlSerializer xs = new System.Xml.Serialization.XmlSerializer(typeof(feed));
                 var feed = (feed)xs.Deserialize(new StringReader(t));
 
-                return feed?.entry?.content?.RuleDescription;
+                if (null == feed || null == feed.entry || 0 == feed.entry.Length || null == feed?.entry[0].content?.RuleDescription)
+                    return new RuleDescription[0];
+
+                RuleDescription[] toReturn = new RuleDescription[feed.entry.Length];
+
+                for (int i = 0; i < toReturn.Length; ++i)
+                {
+                    //string path = feed?.entry[i].title.Value;
+                    //string path = feed?.entry?.content?.SubscriptionDescription[i].Name;
+                    toReturn[i] = feed.entry[i].content.RuleDescription[0];
+                }
+
+                return toReturn;
             }
         }
-        
+
+        /// <summary>Retrieves an enumerable collection of all subscriptions in the service namespace.</summary>
+        /// <param name="topicPath">The path of the topic relative to the service namespace base address.</param>
+        /// <returns>An 
+        /// <see cref="T:System.Collections.Generic.IEnumerable`1" /> object that represents the collection of all subscriptions in the service namespace or returns an empty collection if no subscription exists.</returns> 
+        public IEnumerable<SubscriptionDescription> GetSubscriptions(string topicName)
+        {
+            string address, saddress;
+            GetTopicFeedQueryAddresses(topicName, null, out address, out saddress);
+
+            using (System.Net.WebClient request = new WebClient())
+            {
+                request.AddCommmonHeaders(provider, address, true, false);
+                var t = request.DownloadString(saddress);
+                System.Xml.Serialization.XmlSerializer xs = new System.Xml.Serialization.XmlSerializer(typeof(feed));
+                var feed = (feed)xs.Deserialize(new StringReader(t));
+
+                if (null == feed || null == feed.entry || 0 == feed.entry.Length || null == feed?.entry[0].content?.SubscriptionDescription)
+                    return new SubscriptionDescription[0];
+
+                SubscriptionDescription[] toReturn = new SubscriptionDescription[feed.entry.Length];
+
+                for(int i=0; i < toReturn.Length; ++i)
+                {
+                    string path = feed?.entry[i].title.Value;
+                    //string path = feed?.entry?.content?.SubscriptionDescription[i].Name;
+                    toReturn[i] = new SubscriptionDescription(topicName, path, feed.entry[i].content.SubscriptionDescription[i]);
+                }
+
+                return toReturn;
+            }
+        }
+
         /// <summary>Retrieves an enumerable collection of all rules in the 
         /// service namespace with specified topic path, subscription name and filter.</summary> 
         /// <param name="topicPath">The topic path relative to the service namespace base address.</param>
