@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Mossharbor.AzureWorkArounds.ServiceBus</id>
-    <version>1.0.7</version>
+    <version>1.0.8</version>
     <authors>M@ J.</authors>
     <owners>M@ J.</owners>
     <licenseUrl>https://raw.githubusercontent.com/Mossharbor/AzureWorkArounds.ServiceBus/master/LICENSE</licenseUrl>
@@ -10,7 +10,7 @@
     <!-- <iconUrl>http://ICON_URL_HERE_OR_DELETE_THIS_LINE</iconUrl> -->
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Implmentations of missing dotnet core Azure Service Bus NamespaceManager functionality around Topics, Topics, Subscriptions and Event Hubs.</description>
-    <releaseNotes>Added support for more build targets making working with multi targeted csproj's easier</releaseNotes>
+    <releaseNotes>Added support for GetSubscriptions</releaseNotes>
     <copyright>Copyright 2018 Mossharbor</copyright>
     <tags>ServiceBus dotnetcore Azure</tags>
   </metadata>
