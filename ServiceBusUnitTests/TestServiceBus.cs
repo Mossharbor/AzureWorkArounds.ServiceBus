@@ -10,8 +10,54 @@ namespace ServiceBusUnitTests
     [TestClass]
     public class TestServiceBus
     {
-        public static string serviceBusConnectionString = @"Endpoint=...YOUR CONNECTION STRING HERE!!";
-         
+        public static string serviceBusConnectionString = @"Endpoint=.. TYPE YOUR CONNECTION STRING HERE!!!";
+
+
+        [TestMethod]
+        public void TestLongTopicName()
+        {
+            string topicName = "TestLongTopicName";
+            while (topicName.Length < 261)
+                topicName += "a";
+            NamespaceManager ns = NamespaceManager.CreateFromConnectionString(serviceBusConnectionString);
+            try
+            {
+                TopicDescription description = ns.CreateTopic(topicName);
+                Assert.IsFalse(true);
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                Assert.IsTrue(true);
+            }
+            finally
+            {
+            }
+        }
+
+        [TestMethod]
+        public void TestLongSubscriptionName()
+        {
+            string topicName = "TestLogSubscriptionName";
+            string tooLongSubName = "ServiceBusTest-f7b6c694-b264-40e1-bacb-0e30ca8b33e9";
+            NamespaceManager ns = NamespaceManager.CreateFromConnectionString(serviceBusConnectionString);
+
+            TopicDescription description = ns.CreateTopic(topicName);
+            Assert.IsTrue(null != description);
+            try
+            {
+                ns.CreateSubscription(topicName, tooLongSubName);
+                Assert.IsFalse(true);
+            }
+            catch(ArgumentOutOfRangeException)
+            {
+                Assert.IsTrue(true);
+            }
+            finally
+            {
+                ns.DeleteTopic(topicName);
+            }
+        }
+
         [TestMethod]
         public void TestQueue()
         {

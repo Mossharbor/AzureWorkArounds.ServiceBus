@@ -19,6 +19,9 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
 	/// </example>
     public class NamespaceManager
     {
+        static readonly int MAXPATHLENGTH = 260;
+        static readonly int MAXNAMELENGTH = 50;
+
         private IEnumerable<Uri> endpointAddresses;
 
         private SharedAccessSignatureTokenProvider provider;
@@ -134,6 +137,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
         /// <returns>The <see cref="T:Microsoft.ServiceBus.Messaging.QueueDescription" /> of the newly created queue.</returns>
         public QueueDescription CreateQueue(string queueName)
         {
+            CheckNameLength(queueName, MAXPATHLENGTH, "description.Path");
             string defaultQueueDescriptionXml = "<?xml version=\"1.0\" encoding=\"utf-8\"?><entry xmlns=\"http://www.w3.org/2005/Atom\"><id>uuid:1da6bcce-2d91-4f3c-9b08-2d9316089931;id=1</id><title type=\"text\"></title><updated>2018-05-02T05:34:42Z</updated><content type=\"application/atom+xml;type=entry;charset=utf-8\"><QueueDescription xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"http://schemas.microsoft.com/netservices/2010/10/servicebus/connect\" /></content></entry>";
             string address, saddress;
             GetAddressesNeeded(queueName, out address, out saddress);
@@ -146,6 +150,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
         /// <returns>The <see cref="T:Microsoft.ServiceBus.Messaging.QueueDescription" /> of the newly created queue.</returns>
         public QueueDescription CreateQueue(QueueDescription description)
         {
+            CheckNameLength(description.Path, MAXPATHLENGTH, "description.Path");
             string queueName = description.Path;
             string address, saddress;
             GetAddressesNeeded(queueName, out address, out saddress);
@@ -227,6 +232,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
         /// <returns>The asynchronous operation.</returns>
         public TopicDescription CreateTopic(string topicName)
         {
+            CheckNameLength(topicName, MAXPATHLENGTH, "description.Path");
             string address, saddress;
             GetAddressesNeeded(topicName, out address, out saddress);
             string defaultTopicDescriptionXml = "<?xml version=\"1.0\" encoding=\"utf-8\"?><entry xmlns=\"http://www.w3.org/2005/Atom\"><id>uuid:" + Guid.NewGuid().ToString() + ";id=1</id><title type=\"text\"></title><updated>2018-05-02T06:10:07Z</updated><content type=\"application/atom+xml;type=entry;charset=utf-8\"><TopicDescription xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"http://schemas.microsoft.com/netservices/2010/10/servicebus/connect\" /></content></entry>";
@@ -239,6 +245,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
         /// <returns>The <see cref="T:Microsoft.ServiceBus.Messaging.TopicDescription" /> of the newly created topic.</returns>
         public TopicDescription CreateTopic(TopicDescription topicDescription)
         {
+            CheckNameLength(topicDescription.Path, MAXPATHLENGTH, "description.Path");
             string topicName = topicDescription.Path;
             string address, saddress;
             GetAddressesNeeded(topicName, out address, out saddress);
@@ -327,6 +334,12 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
             return (sd.xml != null);
         }
 
+        private void CheckNameLength(string name, int maxLength, string nameType)
+        {
+            if  (name.Length > maxLength)
+                throw new ArgumentOutOfRangeException(nameType, name, "'The entity path/name '" + name + "' exceeds the '"+ maxLength+"' character limit.");
+        }
+
         public SubscriptionDescription GetSubscription(string topicName, string subscriptionName)
         {
             SubscriptionDescription qd;
@@ -340,6 +353,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
         /// <returns>The <see cref="T:Microsoft.ServiceBus.Messaging.SubscriptionDescription" /> of the newly created subscription.</returns>
         public SubscriptionDescription CreateSubscription(string topicName, string subscriptionName)
         {
+            CheckNameLength(subscriptionName, MAXNAMELENGTH, "description.Name");
             string defaultSubscriptionDescription = "<?xml version=\"1.0\" encoding=\"utf-8\"?><entry xmlns=\"http://www.w3.org/2005/Atom\"><id>uuid:3b6fad82-0e12-4b56-93c4-fc03a5502765;id=1</id><title type=\"text\"></title><updated>2018-05-02T06:28:58Z</updated><content type=\"application/atom+xml;type=entry;charset=utf-8\"><SubscriptionDescription xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"http://schemas.microsoft.com/netservices/2010/10/servicebus/connect\"><DefaultRuleDescription><Filter i:type=\"TrueFilter\"><SqlExpression>1=1</SqlExpression><CompatibilityLevel>20</CompatibilityLevel></Filter><Action i:type=\"EmptyRuleAction\" /><Name>$Default</Name></DefaultRuleDescription></SubscriptionDescription></content></entry>";
             string address, saddress;
             GetAddressesNeeded(topicName, subscriptionName, out address, out saddress);
@@ -372,6 +386,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
 
         public SubscriptionDescription CreateSubscription(SubscriptionDescription description)
         {
+            CheckNameLength(description.Name, MAXNAMELENGTH, "description.Name");
             string address, saddress;
             GetAddressesNeeded(description.TopicPath, description.Name, out address, out saddress);
             entry creationEntry = entry.Build(endpointAddresses.First(), description.Name, saddress);
@@ -534,6 +549,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
         /// <param name="eventHubName">The path to the Event Hub.</param>
         public EventHubDescription CreateEventHub(string eventHubName)
         {
+            CheckNameLength(eventHubName, MAXPATHLENGTH, "description.Path");
             string defaultEventHubDescription = "<?xml version=\"1.0\" encoding=\"utf-8\"?><entry xmlns=\"http://www.w3.org/2005/Atom\"><id>uuid:84922a04-fd86-4062-be51-7d9732be9d4b;id=1</id><title type=\"text\"></title><updated>2018-05-02T07:10:21Z</updated><content type=\"application/atom+xml;type=entry;charset=utf-8\"><EventHubDescription xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"http://schemas.microsoft.com/netservices/2010/10/servicebus/connect\" /></content></entry>";
             string address, saddress;
             GetAddressesNeeded(eventHubName, out address, out saddress);
@@ -591,6 +607,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
         //     Returns Microsoft.ServiceBus.Messaging.ConsumerGroupDescription.
         public ConsumerGroupDescription CreateConsumerGroup(string eventHubName, string consumerGroup)
         {
+            CheckNameLength(consumerGroup, MAXNAMELENGTH, "description.Name");
             string defaultConsumerGroupDescription = "<?xml version=\"1.0\" encoding=\"utf-8\"?><entry xmlns=\"http://www.w3.org/2005/Atom\"><id>uuid:271cb9d0-4bfa-427c-b474-b6172e46a0e2;id=2</id><title type=\"text\"></title><updated>2018-05-08T01:58:43Z</updated><content type=\"application/atom+xml;type=entry;charset=utf-8\"><ConsumerGroupDescription xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"http://schemas.microsoft.com/netservices/2010/10/servicebus/connect\" /></content></entry>";
             string address, saddress;
             GetConsumerGroupAddressNeeded(eventHubName, consumerGroup, out address, out saddress);
