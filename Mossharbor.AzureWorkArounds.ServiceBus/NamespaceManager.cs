@@ -103,6 +103,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
         /// <returns>true if a queue exists in the service namespace; otherwise, false.</returns>
         public bool QueueExists(string queueName, out QueueDescription qd)
         {
+            CheckNameLength(queueName, MAXPATHLENGTH, "description.Path");
             string address, saddress;
             GetAddressesNeeded(queueName, out address, out saddress);
             using (System.Net.WebClient request = new WebClient())
@@ -127,6 +128,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
         //     exception if the queue does not exist in the service namespace.
         public QueueDescription GetQueue(string queueName)
         {
+            CheckNameLength(queueName, MAXPATHLENGTH, "description.Path");
             QueueDescription qd;
             QueueExists(queueName, out qd);
             return qd;
@@ -174,6 +176,8 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
             if (String.IsNullOrWhiteSpace(description.Path))
                 throw new NullReferenceException("Queue Path was null or empty");
 
+            CheckNameLength(description.Path, MAXPATHLENGTH, "description.Path");
+
             string address, saddress;
             GetAddressesNeeded(description.Path, out address, out saddress, true);
 
@@ -193,6 +197,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
 		/// <param name="path">The path of the queue relative to the service namespace base address.</param>
         public void DeleteQueue(string queueName)
         {
+            CheckNameLength(queueName, MAXPATHLENGTH, "description.Path");
             string address, saddress;
             GetAddressesNeeded(queueName, out address, out saddress);
             using (System.Net.WebClient request = new WebClient())
@@ -207,6 +212,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
         /// <returns>true if a topic exists in the service namespace; otherwise, false.</returns>
         public bool TopicExists(string topicName, out TopicDescription td)
         {
+            CheckNameLength(topicName, MAXPATHLENGTH, "description.Path");
             td = null;
             string address, saddress;
             GetAddressesNeeded(topicName, out address, out saddress);
@@ -222,6 +228,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
 
         public TopicDescription GetTopic(string topicName)
         {
+            CheckNameLength(topicName, MAXPATHLENGTH, "description.Path");
             TopicDescription qd;
             TopicExists(topicName, out qd);
             return qd;
@@ -279,6 +286,8 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
         {
             if (String.IsNullOrWhiteSpace(description.Path))
                 throw new NullReferenceException("Topic Path was null or empty");
+            
+            CheckNameLength(description.Path, MAXPATHLENGTH, "description.Path");
 
             string address, saddress;
             GetAddressesNeeded(description.Path, out address, out saddress, true);
@@ -298,6 +307,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
         /// <param name="topicName">The path of the topic relative to the service namespace base address.</param>
         public void DeleteTopic(string topicName)
         {
+            CheckNameLength(topicName, MAXPATHLENGTH, "description.Path");
             string address, saddress;
             GetAddressesNeeded(topicName, out address, out saddress);
             using (System.Net.WebClient request = new WebClient())
@@ -313,6 +323,8 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
         /// <returns>true if a subscription exists in the service namespace; otherwise, false.</returns>
         public bool SubscriptionExists(string topicName, string subscriptionName, out SubscriptionDescription sd)
         {
+            CheckNameLength(topicName, MAXPATHLENGTH, "description.Path");
+            CheckNameLength(subscriptionName, MAXNAMELENGTH, "description.Name");
             sd = null;
             string address, saddress;
             GetAddressesNeeded(topicName, subscriptionName, out address, out saddress);
@@ -342,6 +354,8 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
 
         public SubscriptionDescription GetSubscription(string topicName, string subscriptionName)
         {
+            CheckNameLength(topicName, MAXPATHLENGTH, "description.Path");
+            CheckNameLength(subscriptionName, MAXNAMELENGTH, "description.Name");
             SubscriptionDescription qd;
             SubscriptionExists(topicName, subscriptionName, out qd);
             return qd;
@@ -353,6 +367,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
         /// <returns>The <see cref="T:Microsoft.ServiceBus.Messaging.SubscriptionDescription" /> of the newly created subscription.</returns>
         public SubscriptionDescription CreateSubscription(string topicName, string subscriptionName)
         {
+            CheckNameLength(topicName, MAXPATHLENGTH, "description.Path");
             CheckNameLength(subscriptionName, MAXNAMELENGTH, "description.Name");
             string defaultSubscriptionDescription = "<?xml version=\"1.0\" encoding=\"utf-8\"?><entry xmlns=\"http://www.w3.org/2005/Atom\"><id>uuid:3b6fad82-0e12-4b56-93c4-fc03a5502765;id=1</id><title type=\"text\"></title><updated>2018-05-02T06:28:58Z</updated><content type=\"application/atom+xml;type=entry;charset=utf-8\"><SubscriptionDescription xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"http://schemas.microsoft.com/netservices/2010/10/servicebus/connect\"><DefaultRuleDescription><Filter i:type=\"TrueFilter\"><SqlExpression>1=1</SqlExpression><CompatibilityLevel>20</CompatibilityLevel></Filter><Action i:type=\"EmptyRuleAction\" /><Name>$Default</Name></DefaultRuleDescription></SubscriptionDescription></content></entry>";
             string address, saddress;
@@ -362,6 +377,8 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
 
         public SubscriptionDescription CreateSubscription(string topicName, string subscriptionName, Filter filter)
         {
+            CheckNameLength(topicName, MAXPATHLENGTH, "description.Path");
+            CheckNameLength(subscriptionName, MAXNAMELENGTH, "description.Name");
             SubscriptionDescription description = new SubscriptionDescription(topicName, subscriptionName);
             description.xml.DefaultRuleDescription = new RuleDescription();
             description.xml.DefaultRuleDescription.Filter = filter;
@@ -379,6 +396,8 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
         /// created will be <see cref="F:Microsoft.ServiceBus.Messaging.RuleDescription.DefaultRuleName" />. </remarks>
         public SubscriptionDescription CreateSubscription(string topicName, string subscriptionName, RuleDescription ruleDescription)
         {
+            CheckNameLength(topicName, MAXPATHLENGTH, "description.Path");
+            CheckNameLength(subscriptionName, MAXNAMELENGTH, "description.Name");
             SubscriptionDescription description = new SubscriptionDescription(topicName, subscriptionName);
             description.xml.DefaultRuleDescription = ruleDescription;
             return CreateSubscription(description);
@@ -386,6 +405,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
 
         public SubscriptionDescription CreateSubscription(SubscriptionDescription description)
         {
+            CheckNameLength(description.TopicPath, MAXPATHLENGTH, "description.Path");
             CheckNameLength(description.Name, MAXNAMELENGTH, "description.Name");
             string address, saddress;
             GetAddressesNeeded(description.TopicPath, description.Name, out address, out saddress);
@@ -410,6 +430,10 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
 
             if (String.IsNullOrWhiteSpace(description.Name))
                 throw new NullReferenceException("Name was null or empty");
+
+
+            CheckNameLength(description.TopicPath, MAXPATHLENGTH, "description.Path");
+            CheckNameLength(description.Name, MAXNAMELENGTH, "description.Name");
 
             string address, saddress;
             GetAddressesNeeded(description.TopicPath, description.Name, out address, out saddress, true);
@@ -446,6 +470,8 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
         /// <param name="subscriptionName">The name of the subscription to delete.</param>
         public void DeleteSubscription(string topicName, string subscriptionName)
         {
+            CheckNameLength(topicName, MAXPATHLENGTH, "description.Path");
+            CheckNameLength(subscriptionName, MAXNAMELENGTH, "description.Name");
             string address, saddress;
             GetAddressesNeeded(topicName, subscriptionName, out address, out saddress);
             using (System.Net.WebClient request = new WebClient())
@@ -462,6 +488,8 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
 		/// <see cref="T:System.Collections.Generic.IEnumerable`1" /> object that represents the collection of all rules in the service namespace or returns an empty collection if no rule exists.</returns> 
 		public IEnumerable<RuleDescription> GetRules(string topicName, string subscriptionName)
         {
+            CheckNameLength(topicName, MAXPATHLENGTH, "description.Path");
+            CheckNameLength(subscriptionName, MAXNAMELENGTH, "description.Name");
             string address, saddress;
             GetTopicFeedQueryAddresses(topicName, subscriptionName, out address, out saddress);
 
@@ -494,6 +522,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
         /// <see cref="T:System.Collections.Generic.IEnumerable`1" /> object that represents the collection of all subscriptions in the service namespace or returns an empty collection if no subscription exists.</returns> 
         public IEnumerable<SubscriptionDescription> GetSubscriptions(string topicName)
         {
+            CheckNameLength(topicName, MAXPATHLENGTH, "description.Path");
             string address, saddress;
             GetTopicFeedQueryAddresses(topicName, null, out address, out saddress);
 
@@ -579,6 +608,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
 
         public EventHubDescription GetEventHub(string eventHubName)
         {
+            CheckNameLength(eventHubName, MAXPATHLENGTH, "description.Path");
             EventHubDescription qd;
             EventHubExists(eventHubName, out qd);
             return qd;
@@ -588,6 +618,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
         /// <param name="eventHubName">The path to the Event Hub.</param>
         public void DeleteEventHub(string eventHubName)
         {
+            CheckNameLength(eventHubName, MAXPATHLENGTH, "description.Path");
             DeleteQueue(eventHubName);
         }
 
@@ -607,6 +638,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
         //     Returns Microsoft.ServiceBus.Messaging.ConsumerGroupDescription.
         public ConsumerGroupDescription CreateConsumerGroup(string eventHubName, string consumerGroup)
         {
+            CheckNameLength(eventHubName, MAXPATHLENGTH, "description.Path");
             CheckNameLength(consumerGroup, MAXNAMELENGTH, "description.Name");
             string defaultConsumerGroupDescription = "<?xml version=\"1.0\" encoding=\"utf-8\"?><entry xmlns=\"http://www.w3.org/2005/Atom\"><id>uuid:271cb9d0-4bfa-427c-b474-b6172e46a0e2;id=2</id><title type=\"text\"></title><updated>2018-05-08T01:58:43Z</updated><content type=\"application/atom+xml;type=entry;charset=utf-8\"><ConsumerGroupDescription xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"http://schemas.microsoft.com/netservices/2010/10/servicebus/connect\" /></content></entry>";
             string address, saddress;
@@ -621,6 +653,8 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
 
         public bool ConsumerGroupExists(string eventHubName, string consumerGroupName, out ConsumerGroupDescription cgd)
         {
+            CheckNameLength(eventHubName, MAXPATHLENGTH, "description.Path");
+            CheckNameLength(consumerGroupName, MAXNAMELENGTH, "description.Name");
             cgd = null;
             string address, saddress;
             GetConsumerGroupAddressNeeded(eventHubName, consumerGroupName, out address, out saddress);
@@ -644,6 +678,8 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
 
         public ConsumerGroupDescription GetConsumerGroup(string eventHubName, string consumerGroupName)
         {
+            CheckNameLength(eventHubName, MAXPATHLENGTH, "description.Path");
+            CheckNameLength(consumerGroupName, MAXNAMELENGTH, "description.Name");
             ConsumerGroupDescription qd;
             ConsumerGroupExists(eventHubName, consumerGroupName, out qd);
             return qd;
@@ -661,6 +697,8 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
         //     The name of the consumer group to delete.
         public void DeleteConsumerGroup(string eventHubName, string consumerGroupName)
         {
+            CheckNameLength(eventHubName, MAXPATHLENGTH, "description.Path");
+            CheckNameLength(consumerGroupName, MAXNAMELENGTH, "description.Name");
             string address, saddress;
             GetConsumerGroupAddressNeeded(eventHubName, consumerGroupName, out address, out saddress);
             using (System.Net.WebClient request = new WebClient())
@@ -677,17 +715,21 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
         //   consumerGroupName:
         //
         //   name:
-        public PartitionDescription GetEventHubPartition(string eventHubName, string consumerGroup, string partitionId)
+        public PartitionDescription GetEventHubPartition(string eventHubName, string consumerGroupName, string partitionId)
         {
+            CheckNameLength(eventHubName, MAXPATHLENGTH, "description.Path");
+            CheckNameLength(consumerGroupName, MAXNAMELENGTH, "description.Name");
             PartitionDescription pd;
-            PartitionExists(eventHubName, consumerGroup, partitionId, out pd);
+            PartitionExists(eventHubName, consumerGroupName, partitionId, out pd);
             return pd;
         }
 
-        public bool PartitionExists(string eventHubName, string consumerGroup, string partitionId, out PartitionDescription pd)
+        public bool PartitionExists(string eventHubName, string consumerGroupName, string partitionId, out PartitionDescription pd)
         {
+            CheckNameLength(eventHubName, MAXPATHLENGTH, "description.Path");
+            CheckNameLength(consumerGroupName, MAXNAMELENGTH, "description.Name");
             string address, saddress;
-            GetConsumerGroupAddressNeeded(eventHubName, consumerGroup, partitionId, out address, out saddress);
+            GetConsumerGroupAddressNeeded(eventHubName, consumerGroupName, partitionId, out address, out saddress);
             using (System.Net.WebClient request = new WebClient())
             {
                 request.AddCommmonHeaders(provider, address);

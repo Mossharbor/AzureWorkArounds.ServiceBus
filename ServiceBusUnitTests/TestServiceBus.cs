@@ -10,7 +10,7 @@ namespace ServiceBusUnitTests
     [TestClass]
     public class TestServiceBus
     {
-        public static string serviceBusConnectionString = @"Endpoint=.. TYPE YOUR CONNECTION STRING HERE!!!";
+        public static string serviceBusConnectionString = @"Endpoint=... YOUR CONNECTION STRING HERE!!!";
 
 
         [TestMethod]
