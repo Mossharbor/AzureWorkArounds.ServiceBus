@@ -22,13 +22,13 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
         static readonly int MAXPATHLENGTH = 260;
         static readonly int MAXNAMELENGTH = 50;
 
-        private IEnumerable<Uri> endpointAddresses;
+        public IEnumerable<Uri> EndpointAddresses;
 
         private SharedAccessSignatureTokenProvider provider;
 
         internal NamespaceManager(IEnumerable<Uri> endpointAddresses, SharedAccessSignatureTokenProvider provider)
         {
-            this.endpointAddresses = endpointAddresses;
+            this.EndpointAddresses = endpointAddresses;
             this.provider = provider;
         }
 
@@ -49,7 +49,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
 
         private void GetAddressesNeeded(string path, out string address, out string saddress, bool changeQuestionmark = false)
         {
-            string rootUri = endpointAddresses.First().AbsoluteUri.Replace("sb://", "");
+            string rootUri = EndpointAddresses.First().AbsoluteUri.Replace("sb://", "");
             address = @"http://" + rootUri + path + "/?api-version=2017-04";
             saddress = @"https://" + rootUri + path + "/?api-version=2017-04";
 
@@ -59,7 +59,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
 
         private void GetAddressesNeeded(string path, string subscription, out string address, out string saddress, bool changeQuestionmark = false)
         {
-            string rootUri = endpointAddresses.First().AbsoluteUri.Replace("sb://", "");
+            string rootUri = EndpointAddresses.First().AbsoluteUri.Replace("sb://", "");
             address = @"http://" + rootUri + path + "/Subscriptions/" + subscription + "/?api-version=2017-04";
             saddress = @"https://" + rootUri + path + "/Subscriptions/" + subscription + "/?api-version=2017-04";
 
@@ -69,7 +69,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
 
         private void GetTopicFeedQueryAddresses(string path, string subscription, out string address, out string saddress)
         {
-            string rootUri = endpointAddresses.First().AbsoluteUri.Replace("sb://", "");
+            string rootUri = EndpointAddresses.First().AbsoluteUri.Replace("sb://", "");
             bool includeRules = (null != subscription);
 
             if (!includeRules)
@@ -86,14 +86,14 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
 
         private void GetConsumerGroupAddressNeeded(string path, string consumerGroup, out string address, out string saddress)
         {
-            string rootUri = endpointAddresses.First().AbsoluteUri.Replace("sb://", "");
+            string rootUri = EndpointAddresses.First().AbsoluteUri.Replace("sb://", "");
             address = @"http://" + rootUri + path + "/ConsumerGroups/" + consumerGroup + "/?api-version=2017-04";
             saddress = @"https://" + rootUri + path + "/ConsumerGroups/" + consumerGroup + "/?api-version=2017-04";
         }
 
         private void GetConsumerGroupAddressNeeded(string path, string consumerGroup, string partition, out string address, out string saddress)
         {
-            string rootUri = endpointAddresses.First().AbsoluteUri.Replace("sb://", "");
+            string rootUri = EndpointAddresses.First().AbsoluteUri.Replace("sb://", "");
             address = @"http://" + rootUri + path + "/ConsumerGroups/" + consumerGroup + "/Partitions/" + partition + "/?api-version=2017-04";
             saddress = @"https://" + rootUri + path + "/ConsumerGroups/" + consumerGroup + "/Partitions/" + partition + "/?api-version=2017-04";
         }
@@ -156,7 +156,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
             string queueName = description.Path;
             string address, saddress;
             GetAddressesNeeded(queueName, out address, out saddress);
-            entry creationEntry = entry.Build(endpointAddresses.First(), queueName, saddress);
+            entry creationEntry = entry.Build(EndpointAddresses.First(), queueName, saddress);
             creationEntry.content.QueueDescription = description.xml;
             var content = Create(creationEntry.ToXml(), address, saddress);
             var queueDesc = new QueueDescription(description.Path, content?.QueueDescription);
@@ -182,7 +182,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
             GetAddressesNeeded(description.Path, out address, out saddress, true);
 
 
-            entry toXml = entry.Build(endpointAddresses.First(), description.Path, saddress);
+            entry toXml = entry.Build(EndpointAddresses.First(), description.Path, saddress);
             toXml.content.QueueDescription = description.xml;
 
             using (System.Net.WebClient request = new WebClient())
@@ -275,7 +275,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
             string topicName = topicDescription.Path;
             string address, saddress;
             GetAddressesNeeded(topicName, out address, out saddress);
-            entry creationEntry = entry.Build(endpointAddresses.First(), topicName, saddress);
+            entry creationEntry = entry.Build(EndpointAddresses.First(), topicName, saddress);
             creationEntry.content.TopicDescription = topicDescription.xml;
 
             var content = Create(creationEntry.ToXml(), address, saddress);
@@ -288,11 +288,11 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
             return topicDesc;
         }
 
-        private entryContent Create(string xml, string address, string saddress)
+        private entryContent Create(string xml, string address, string saddress, string qaddress = null)
         {
             using (System.Net.WebClient request = new WebClient())
             {
-                request.AddCommmonHeaders(provider, address, true, true);
+                request.AddCommmonHeaders(provider, address, true, true, qaddress: qaddress);
                 var t = request.UploadEntryXml(saddress, xml);
                 return t?.content;
             }
@@ -311,7 +311,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
             string address, saddress;
             GetAddressesNeeded(description.Path, out address, out saddress, true);
 
-            entry toXml = entry.Build(endpointAddresses.First(), description.Path, saddress);
+            entry toXml = entry.Build(EndpointAddresses.First(), description.Path, saddress);
             toXml.content.TopicDescription = description.xml;
 
             using (System.Net.WebClient request = new WebClient())
@@ -458,10 +458,10 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
             CheckNameLength(description.Name, MAXNAMELENGTH, "description.Name");
             string address, saddress;
             GetAddressesNeeded(description.TopicPath, description.Name, out address, out saddress);
-            entry creationEntry = entry.Build(endpointAddresses.First(), description.Name, saddress);
+            entry creationEntry = entry.Build(EndpointAddresses.First(), description.Name, saddress);
             creationEntry.content.SubscriptionDescription = description.xml;
             string xml = creationEntry.ToXml();
-            var content = Create(xml, address, saddress);
+            var content = Create(xml, address, saddress, description.ForwardTo);
             var subDesc = new SubscriptionDescription(description.TopicPath, description.Name, content?.SubscriptionDescription);
             if (null != subDesc.xml)
             {
@@ -487,12 +487,12 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
             string address, saddress;
             GetAddressesNeeded(description.TopicPath, description.Name, out address, out saddress, true);
 
-            entry toXml = entry.Build(endpointAddresses.First(), description.Name, saddress);
+            entry toXml = entry.Build(EndpointAddresses.First(), description.Name, saddress);
             toXml.content.SubscriptionDescription = description.xml;
 
             using (System.Net.WebClient request = new WebClient())
             {
-                request.AddCommmonHeaders(provider, address, true, true, true);
+                request.AddCommmonHeaders(provider, address, true, true, true, description.ForwardTo);
                 var t = request.UploadEntryXml(saddress, toXml);
                 return new SubscriptionDescription(description.TopicPath, description.Name, t?.content?.SubscriptionDescription);
             }

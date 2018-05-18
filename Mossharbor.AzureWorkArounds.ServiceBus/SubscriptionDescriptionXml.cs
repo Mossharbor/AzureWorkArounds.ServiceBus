@@ -55,6 +55,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
         private bool deadLetteringOnFilterEvaluationExceptionsField = true;
 
         private long messageCountField;
+        private string forwardToField;
 
         private int maxDeliveryCountField = Constants.DefaultMaxDeliveryCount;
 
@@ -249,6 +250,24 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
                 }
                 this.MaxDeliveryCountSpecified = true;
                 this.maxDeliveryCountField = value;
+            }
+        }
+
+        [System.Xml.Serialization.XmlIgnore]
+        public bool ForwardToSpecified { get; set; }
+
+        /// <summary>Fowards Subscription To Queue.</summary>
+        /// <value>QueueName.</value>
+        public string ForwardTo
+        {
+            get
+            {
+                return this.forwardToField;
+            }
+            set
+            {
+                this.ForwardToSpecified = true;
+                this.forwardToField = value;
             }
         }
 

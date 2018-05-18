@@ -39,7 +39,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
             return (entry)xs.Deserialize(new StringReader(response));
         }
 
-        public static void AddCommmonHeaders(this WebClient request, SharedAccessSignatureTokenProvider provider, string address, bool addContentType = true, bool addAnonHeader = false, bool addIfMatchheader = false)
+        public static void AddCommmonHeaders(this WebClient request, SharedAccessSignatureTokenProvider provider, string address, bool addContentType = true, bool addAnonHeader = false, bool addIfMatchheader = false, string qaddress = null)
         { 
             if (addContentType)
                 request.AddContentType();
@@ -50,6 +50,12 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
             request.SetUserAgentHeader();
             request.AddXProcessAtHeader();
             request.AddAuthorizationHeader(provider, address);
+
+            if (!string.IsNullOrWhiteSpace(qaddress))
+            {
+                request.AddServiceBusSupplementaryAuthorizationHeader(provider, qaddress);
+            }
+
             request.AddTrackingIdHeader(Guid.NewGuid());
         }
 
@@ -61,6 +67,16 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
                 request.Headers[HttpRequestHeader.Authorization] = messagingWebToken;
             }
         }
+
+        public static void AddServiceBusSupplementaryAuthorizationHeader(this WebClient request, SharedAccessSignatureTokenProvider tokenProvider, string address)
+        {
+            if (tokenProvider != null)
+            {
+                string messagingWebToken = tokenProvider.BuildSignature(address); //tokenProvider.GetMessagingWebToken(namespaceAddress, request.RequestUri.AbsoluteUri, action, false, Constants.TokenRequestOperationTimeout);
+                request.Headers["ServiceBusSupplementaryAuthorization"] = messagingWebToken;
+            }
+        }
+
         public static void AddContentType(this WebClient request)
         {
             request.Headers["Content-Type"] = "application/atom+xml;type=entry;charset=utf-8";
