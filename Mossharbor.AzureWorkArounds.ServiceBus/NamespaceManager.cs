@@ -226,6 +226,25 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
             return (td.xml != null);
         }
 
+        /// <summary>Determines whether a topic exists in the service namespace.</summary>
+        /// <param name="path">The path of the topic relative to the service namespace base address.</param>
+        /// <returns>true if a topic exists in the service namespace; otherwise, false.</returns>
+        public bool TopicExists(string topicName)
+        {
+            CheckNameLength(topicName, MAXPATHLENGTH, "description.Path");
+            TopicDescription td = null;
+            string address, saddress;
+            GetAddressesNeeded(topicName, out address, out saddress);
+            using (System.Net.WebClient request = new WebClient())
+            {
+                request.AddCommmonHeaders(provider, address);
+                var t = request.DownloadEntryXml(saddress);
+                td = new TopicDescription(topicName, t?.content?.TopicDescription);
+            }
+            // build up the url like this:
+            return (td.xml != null);
+        }
+
         public TopicDescription GetTopic(string topicName)
         {
             CheckNameLength(topicName, MAXPATHLENGTH, "description.Path");
@@ -326,6 +345,36 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
             CheckNameLength(topicName, MAXPATHLENGTH, "description.Path");
             CheckNameLength(subscriptionName, MAXNAMELENGTH, "description.Name");
             sd = null;
+            string address, saddress;
+            GetAddressesNeeded(topicName, subscriptionName, out address, out saddress);
+            using (System.Net.WebClient request = new WebClient())
+            {
+                request.AddCommmonHeaders(provider, address);
+                try
+                {
+                    var t = request.DownloadEntryXml(saddress);
+                    sd = new SubscriptionDescription(topicName, subscriptionName, t?.content?.SubscriptionDescription);
+                }
+                catch (WebException we)
+                {
+                    if ((we.Response as HttpWebResponse).StatusCode == HttpStatusCode.NotFound)
+                        return false;
+                }
+            }
+            // build up the url like this:
+            return (sd.xml != null);
+        }
+
+
+        /// <summary>Determines whether a subscription exists in the service namespace.</summary>
+        /// <param name="topicPath">The path of the topic relative to the service namespace base address.</param>
+        /// <param name="name">The name of the subscription.</param>
+        /// <returns>true if a subscription exists in the service namespace; otherwise, false.</returns>
+        public bool SubscriptionExists(string topicName, string subscriptionName)
+        {
+            CheckNameLength(topicName, MAXPATHLENGTH, "description.Path");
+            CheckNameLength(subscriptionName, MAXNAMELENGTH, "description.Name");
+            SubscriptionDescription sd = null;
             string address, saddress;
             GetAddressesNeeded(topicName, subscriptionName, out address, out saddress);
             using (System.Net.WebClient request = new WebClient())
@@ -606,6 +655,24 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
             return (qd != null);
         }
 
+
+        /// <summary>Indicates whether or not an Event Hub exists.</summary>
+        /// <param name="eventHubName">The path to the Event Hub.</param>
+        /// <returns>Returns true if the Event Hub exists; otherwise, false.</returns>
+        public bool EventHubExists(string eventHubName)
+        {
+            EventHubDescription qd = null;
+            string address, saddress;
+            GetAddressesNeeded(eventHubName, out address, out saddress);
+            using (System.Net.WebClient request = new WebClient())
+            {
+                request.AddCommmonHeaders(provider, address);
+                var t = request.DownloadEntryXml(saddress);
+                qd = t?.content?.EventHubDescription;
+            }
+            return (qd != null);
+        }
+
         public EventHubDescription GetEventHub(string eventHubName)
         {
             CheckNameLength(eventHubName, MAXPATHLENGTH, "description.Path");
@@ -649,6 +716,31 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
                 var t = request.UploadEntryXml(saddress, defaultConsumerGroupDescription);
                 return t?.content?.ConsumerGroupDescription;
             }
+        }
+
+        public bool ConsumerGroupExists(string eventHubName, string consumerGroupName)
+        {
+            CheckNameLength(eventHubName, MAXPATHLENGTH, "description.Path");
+            CheckNameLength(consumerGroupName, MAXNAMELENGTH, "description.Name");
+            ConsumerGroupDescription cgd = null;
+            string address, saddress;
+            GetConsumerGroupAddressNeeded(eventHubName, consumerGroupName, out address, out saddress);
+            using (System.Net.WebClient request = new WebClient())
+            {
+                try
+                {
+                    request.AddCommmonHeaders(provider, address);
+                    var t = request.DownloadEntryXml(saddress);
+                    cgd = t?.content?.ConsumerGroupDescription;
+                }
+                catch (System.Net.WebException we)
+                {
+                    if ((we.Response as HttpWebResponse).StatusCode == HttpStatusCode.NotFound)
+                        return false;
+                }
+            }
+            return (cgd != null);
+
         }
 
         public bool ConsumerGroupExists(string eventHubName, string consumerGroupName, out ConsumerGroupDescription cgd)
