@@ -101,12 +101,27 @@ namespace ServiceBusUnitTests
         {
             string name = "testSubscription";
             string topicName = "TestGetSubscriptions";
+            string queueName = "testQueue";
+
             NamespaceManager ns = NamespaceManager.CreateFromConnectionString(serviceBusConnectionString);
+
             try
             {
+                DeleteSafeQueue(ns, queueName);
+                DeleteSafeTopic(ns, topicName);
+
                 TopicDescription tdescription = ns.CreateTopic(topicName);
                 Assert.IsTrue(null != tdescription);
-                SubscriptionDescription sdescription = ns.CreateSubscription(topicName, name);
+
+                var queueDescription = ns.CreateQueue(queueName);
+                Assert.IsTrue(null != queueDescription);
+
+                var description = new SubscriptionDescription(topicName, name)
+                {
+                    ForwardTo = ns.EndpointAddresses.First() + queueName
+                };
+
+                SubscriptionDescription sdescription = ns.CreateSubscription(description);
                 Assert.IsTrue(null != sdescription);
 
                 IEnumerable<SubscriptionDescription> suscriptions = ns.GetSubscriptions(topicName);
@@ -114,7 +129,32 @@ namespace ServiceBusUnitTests
             }
             finally
             {
+                DeleteSafeQueue(ns, queueName);
+                DeleteSafeTopic(ns, topicName);
+            }
+        }
+
+        private void DeleteSafeQueue(NamespaceManager ns, string queueName)
+        {
+            try
+            {
+                ns.DeleteQueue(queueName);
+            }
+            catch
+            {
+                // ignored
+            }
+        }
+
+        private void DeleteSafeTopic(NamespaceManager ns, string topicName)
+        {
+            try
+            {
                 ns.DeleteTopic(topicName);
+            }
+            catch
+            {
+                // ignored
             }
         }
 

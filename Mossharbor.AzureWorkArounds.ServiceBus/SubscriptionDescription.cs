@@ -90,6 +90,20 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
             }
         }
 
+        /// <summary>Fowards Subscription To Queue.</summary>
+        /// <value>QueueName.</value>
+        public string ForwardTo
+        {
+            get
+            {
+                return this.xml.ForwardTo;
+            }
+            set
+            {
+                this.xml.ForwardTo = value;
+            }
+        }
+
         /// <summary>Gets or sets a value that indicates whether server-side batched operations are enabled.</summary>
         /// <value>true if the batched operations are enabled; otherwise, false.</value>
         public bool EnableBatchedOperations
