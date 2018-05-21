@@ -196,7 +196,7 @@ namespace ServiceBusUnitTests
         {
             string name = "testSubscription";
             string topicName = "TestForwardTo";
-            string queueName = "Testforwardtoqueue";
+            string queueName = "Testforwardtoqueue".ToLower();
 
             NamespaceManager ns = NamespaceManager.CreateFromConnectionString(serviceBusConnectionString);
 
@@ -211,13 +211,21 @@ namespace ServiceBusUnitTests
                 var queueDescription = ns.CreateQueue(queueName);
                 Assert.IsTrue(null != queueDescription);
 
+                string endpointAddress = String.Empty;
+                int endpointIndex = serviceBusConnectionString.IndexOf("Endpoint=sb") + "Endpoint=".Length;
+                int nextColon = serviceBusConnectionString.IndexOf(';', endpointIndex);
+                if (nextColon < 0)
+                    nextColon = serviceBusConnectionString.Length - 1;
+                endpointAddress = serviceBusConnectionString.Substring(endpointIndex, nextColon- endpointIndex);
+                string forwardToAddress = endpointAddress + queueName;
                 var description = new SubscriptionDescription(topicName, name)
                 {
-                    ForwardTo = ns.EndpointAddresses.First() + queueName
+                    ForwardTo = forwardToAddress
                 };
 
                 SubscriptionDescription sdescription = ns.CreateSubscription(description);
                 Assert.IsTrue(null != sdescription);
+                Assert.IsTrue(forwardToAddress.Equals(sdescription.ForwardTo));
 
                 IEnumerable<SubscriptionDescription> suscriptions = ns.GetSubscriptions(topicName);
                 Assert.IsTrue(suscriptions.First().Name.Equals(name));

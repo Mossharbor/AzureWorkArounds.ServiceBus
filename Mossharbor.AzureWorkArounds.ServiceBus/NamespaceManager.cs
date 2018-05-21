@@ -22,7 +22,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
         static readonly int MAXPATHLENGTH = 260;
         static readonly int MAXNAMELENGTH = 50;
 
-        public IEnumerable<Uri> EndpointAddresses;
+        private IEnumerable<Uri> EndpointAddresses;
 
         private SharedAccessSignatureTokenProvider provider;
 
