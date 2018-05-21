@@ -90,8 +90,8 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
             }
         }
 
-        /// <summary>Fowards Subscription To Queue.</summary>
-        /// <value>QueueName.</value>
+        /// <summary>Gets or sets the path to the recipient to which the message is forwarded.</summary>
+		/// <value>The path to the recipient to which the message is forwarded.</value>
         public string ForwardTo
         {
             get

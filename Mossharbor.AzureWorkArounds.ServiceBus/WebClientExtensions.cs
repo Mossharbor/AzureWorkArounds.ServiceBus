@@ -63,7 +63,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
         {
             if (tokenProvider != null)
             {
-                string messagingWebToken = tokenProvider.BuildSignature(address); //tokenProvider.GetMessagingWebToken(namespaceAddress, request.RequestUri.AbsoluteUri, action, false, Constants.TokenRequestOperationTimeout);
+                string messagingWebToken = tokenProvider.BuildSignature(address);
                 request.Headers[HttpRequestHeader.Authorization] = messagingWebToken;
             }
         }
