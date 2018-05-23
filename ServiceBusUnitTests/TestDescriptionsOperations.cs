@@ -11,6 +11,71 @@ namespace ServiceBusUnitTests
     [TestClass]
     public class TestDescriptionsOperations
     {
+        [TestMethod]
+        public void RelayHttpCreation()
+        {
+            string relayName = "RelayHttpCreation";
+            var ns = NamespaceManager.CreateFromConnectionString(TestServiceBus.relayConnectionString);
+            try
+            {
+                RelayDescription initialDesc = ns.CreateRelay(relayName,RelayType.Http);
+            }
+            finally
+            {
+                ns.DeleteRelay(relayName);
+            }
+        }
+
+        [TestMethod]
+        public void RelayTcpCreation()
+        {
+            string relayName = "RelayTcpCreation";
+            var ns = NamespaceManager.CreateFromConnectionString(TestServiceBus.relayConnectionString);
+            try
+            {
+                RelayDescription initialDesc = ns.CreateRelay(relayName, RelayType.NetTcp);
+            }
+            finally
+            {
+                ns.DeleteRelay(relayName);
+            }
+        }
+
+        [TestMethod]
+        public void GetRelay()
+        {
+            string RelayName = "GetRelay".ToLower() + Guid.NewGuid().ToString().Substring(0, 5);
+            var ns = NamespaceManager.CreateFromConnectionString(TestServiceBus.relayConnectionString);
+            try
+            {
+                RelayDescription initialDesc = ns.CreateRelay(RelayName, RelayType.Http);
+                RelayDescription getDesc = ns.GetRelay(RelayName);
+                Assert.IsTrue(getDesc.RequiresTransportSecurity == initialDesc.RequiresTransportSecurity);
+            }
+            finally
+            {
+                ns.DeleteRelay(RelayName);
+            }
+        }
+
+        //[TestMethod]
+        //public void RelayModification()
+        //{
+        //    string RelayName = "RelayModification".ToLower() + Guid.NewGuid().ToString().Substring(0, 5);
+        //    var ns = NamespaceManager.CreateFromConnectionString(TestServiceBus.relayConnectionString);
+        //    try
+        //    {
+        //        RelayDescription initialDesc = ns.CreateRelay(RelayName,RelayType.Http);
+        //        initialDesc.RequiresTransportSecurity = true;
+        //        RelayDescription retDesc = ns.UpdateRelay(initialDesc);
+        //        RelayDescription getDesc = ns.GetRelay(RelayName);
+        //        Assert.IsTrue(getDesc.RequiresTransportSecurity == retDesc.RequiresTransportSecurity);
+        //    }
+        //    finally
+        //    {
+        //        ns.DeleteRelay(RelayName);
+        //    }
+        //}
 
         [TestMethod]
         public void QueueCreation()

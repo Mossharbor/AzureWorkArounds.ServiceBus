@@ -11,7 +11,8 @@ namespace ServiceBusUnitTests
     public class TestServiceBus
     {
         public static string serviceBusConnectionString = @"Endpoint=... YOUR CONNECTION STRING HERE!!!";
-        
+        public static string relayConnectionString = @"Endpoint=... YOUR CONNECTION STRING HERE!!!";
+
         private void DeleteSafeQueue(NamespaceManager ns, string queueName)
         {
             try
