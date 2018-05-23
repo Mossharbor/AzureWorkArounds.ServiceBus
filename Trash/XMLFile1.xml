@@ -1,27 +1,24 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<entry xmlns="http://www.w3.org/2005/Atom">
-  <id>uuid:784186c8-9a16-461b-a7e6-9143169989db;id=1</id>
-  <title type="text"></title>
-  <updated>2018-05-11T06:22:48Z</updated>
-  <content type="application/atom+xml;type=entry;charset=utf-8">
-    <SubscriptionDescription xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect">
-      <DefaultRuleDescription>
-        <Filter i:type="CorrelationFilter">
-          <CorrelationId>1234</CorrelationId>
-          <Properties>
-            <KeyValueOfstringanyType>
-              <Key>prop1</Key>
-              <Value xmlns:d7p1="http://www.w3.org/2001/XMLSchema" i:type="d7p1:string">abc</Value>
-            </KeyValueOfstringanyType>
-            <KeyValueOfstringanyType>
-              <Key>prop2</Key>
-              <Value xmlns:d7p1="http://www.w3.org/2001/XMLSchema" i:type="d7p1:string">xyz</Value>
-            </KeyValueOfstringanyType>
-          </Properties>
-        </Filter>
-        <Action i:type="EmptyRuleAction" />
-        <Name>$Default</Name>
-      </DefaultRuleDescription>
-    </SubscriptionDescription>
+﻿<entry xmlns="http://www.w3.org/2005/Atom">
+  <id>https://telegraphytest.servicebus.windows.net/foo/?api-version=2017-04</id>
+  <title type="text">foo</title>
+  <published>2018-05-23T05:48:54Z</published>
+  <updated>2018-05-23T05:48:54Z</updated>
+  <author>
+    <name>telegraphytest</name>
+  </author>
+  <link rel="self" href="https://telegraphytest.servicebus.windows.net/foo/?api-version=2017-04"/>
+  <content type="application/xml">
+    <RelayDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+      <Path>foo</Path>
+      <ListenerType>RelayedHttp</ListenerType>
+      <CreatedAt>2018-05-23T05:48:54.1278061Z</CreatedAt>
+      <UpdatedAt>2018-05-23T05:48:54.1278061Z</UpdatedAt>
+      <RelayType>Http</RelayType>
+      <RequiresClientAuthorization>true</RequiresClientAuthorization>
+      <RequiresTransportSecurity>true</RequiresTransportSecurity>
+      <PublishToRegistry>false</PublishToRegistry>
+      <AuthorizationRules></AuthorizationRules>
+      <IsDynamic>false</IsDynamic>
+    </RelayDescription>
   </content>
 </entry>

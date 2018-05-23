@@ -41,4 +41,30 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
         /// <summary>The entity is being renamed.</summary>
         Renaming
     }
+
+    public enum ListenerType
+    {
+        None,
+        Unicast,
+        Multicast,
+        DirectConnection,
+        HybridConnection,
+        RelayedConnection,
+        RelayedHttp,
+        Junction
+    }
+
+    public enum RelayType
+    {
+        /// <summary>The relay is None.</summary>
+        None,
+        /// <summary>The NetTcp relay.</summary>
+        NetTcp,
+        /// <summary>The HTTP relay.</summary>
+        Http,
+        /// <summary>The NetEvent relay.</summary>
+        NetEvent,
+        /// <summary>The NetOneway relay.</summary>
+        NetOneway
+    }
 }

@@ -655,7 +655,6 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
             return (qd != null);
         }
 
-
         /// <summary>Indicates whether or not an Event Hub exists.</summary>
         /// <param name="eventHubName">The path to the Event Hub.</param>
         /// <returns>Returns true if the Event Hub exists; otherwise, false.</returns>
@@ -829,6 +828,114 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
                 pd = t?.content?.PartitionDescription;
             }
             return (pd != null);
+        }
+
+        /// <summary>Creates a new relay in the service namespace with the given path and type.</summary>
+		/// <param name="path">The path of the queue relative to the service namespace base address.</param>
+		/// <param name="type">The relay type.</param>
+		/// <returns>The <see cref="T:Microsoft.ServiceBus.Messaging.RelayDescription" /> object for the newly created relay.</returns>
+		public RelayDescription CreateRelay(string path, RelayType type)
+        {
+            CheckNameLength(path, MAXPATHLENGTH, "description.Path");
+            RelayDescription desc = new RelayDescription(path, type);
+            return CreateRelay(desc);
+        }
+
+        /// <summary>Creates a new relay in the service namespace with the specified relay description.</summary>
+        /// <param name="description">The description object describing the attributes with which the new relay will be created.</param>
+        /// <returns>The <see cref="T:Microsoft.ServiceBus.Messaging.RelayDescription" /> object for the newly created relay.</returns>
+        public RelayDescription CreateRelay(RelayDescription description)
+        {
+            CheckNameLength(description.Path, MAXPATHLENGTH, "description.Path");
+            string address, saddress;
+            GetAddressesNeeded(description.Path, out address, out saddress);
+            entry creationEntry = entry.Build(EndpointAddresses.First(), description.Path, saddress);
+            creationEntry.content.RelayDescription = description.xml;
+            var content = Create(creationEntry.ToXml(), address, saddress);
+            var relayDesc = new RelayDescription(description.Path, content?.RelayDescription);
+            if (null != relayDesc.xml)
+            {
+                relayDesc.xml.ResetSerialization();
+                relayDesc.xml.Path = description.Path;
+            }
+            return relayDesc;
+        }
+
+
+        /// <summary>Determines whether a relay exists in the service namespace.</summary>
+        /// <param name="path">The path of the relay relative to the service namespace base address.</param>
+        public bool RelayExists(string path,out RelayDescription rd)
+        {
+            CheckNameLength(path, MAXPATHLENGTH, "description.Path");
+            string address, saddress;
+            GetAddressesNeeded(path, out address, out saddress);
+            using (System.Net.WebClient request = new WebClient())
+            {
+                request.AddCommmonHeaders(provider, address);
+                var t = request.DownloadEntryXml(saddress);
+                rd = new RelayDescription(path, t?.content?.RelayDescription);
+            }
+            return (rd.xml != null);
+        }
+
+        /// <summary>Determines whether a relay exists in the service namespace.</summary>
+        /// <param name="path">The path of the relay relative to the service namespace base address.</param>
+        public bool RelayExists(string path)
+        {
+            RelayDescription rd;
+            return RelayExists(path, out rd);
+        }
+
+        /// <summary>Upddates a relay endpoint.</summary>
+		/// <param name="description">A <see cref="T:Microsoft.ServiceBus.Messaging.RelayDescription" /> object describing the updated relay.</param>
+		public RelayDescription UpdateRelay(RelayDescription description)
+        {
+            if (String.IsNullOrWhiteSpace(description.Path))
+                throw new NullReferenceException("Relay Path was null or empty");
+
+            CheckNameLength(description.Path, MAXPATHLENGTH, "description.Path");
+
+            string address, saddress;
+            GetAddressesNeeded(description.Path, out address, out saddress, true);
+
+            entry toXml = entry.Build(EndpointAddresses.First(), description.Path, saddress);
+            toXml.content.RelayDescription = description.xml;
+
+            using (System.Net.WebClient request = new WebClient())
+            {
+                request.AddCommmonHeaders(provider, address, true, true, true);
+                var t = request.UploadEntryXml(saddress, toXml);
+                return new RelayDescription(description.Path, t?.content?.RelayDescription);
+            }
+        }
+
+        /// <summary>Deletes the relay described by the path relative to the service namespace base address.</summary>
+		/// <param name="path">The path of the relay relative to the service namespace base address.</param>
+		public void DeleteRelay(string path)
+        {
+            CheckNameLength(path, MAXPATHLENGTH, "description.Path");
+            string address, saddress;
+            GetAddressesNeeded(path, out address, out saddress);
+            using (System.Net.WebClient request = new WebClient())
+            {
+                request.AddCommmonHeaders(provider, address, false);
+                request.UploadValues(saddress, "DELETE", new NameValueCollection());
+            }
+        }
+
+        /// <summary>Retrieves the details of a given relay endpoint.</summary>
+		/// <param name="path">The relay path.</param>
+		public RelayDescription GetRelay(string path)
+        {
+            RelayDescription rd;
+            RelayExists(path, out rd);
+            return rd;
+        }
+
+        /// <summary>Retrieves a collection of all relays in the service namespace.</summary>
+        public IEnumerable<RelayDescription> GetRelays()
+        {
+            throw new NotImplementedException();
         }
     }
 }

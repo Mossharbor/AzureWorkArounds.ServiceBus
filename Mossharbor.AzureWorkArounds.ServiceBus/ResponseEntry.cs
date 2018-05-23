@@ -278,6 +278,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
         private ConsumerGroupDescription consumerGroupDescriptionField;
         private PartitionDescription partitionDescriptionField;
         private RuleDescription[] ruleDescriptionField;
+        private RelayDescriptionXml relayDescriptionXmlField;
 
         private string typeField = "application/xml";
 
@@ -362,7 +363,21 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
                 this.partitionDescriptionField = value;
             }
         }
-        
+
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Namespace = "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect")]
+        public RelayDescriptionXml RelayDescription
+        {
+            get
+            {
+                return this.relayDescriptionXmlField;
+            }
+            set
+            {
+                this.relayDescriptionXmlField = value;
+            }
+        }
+
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string type
