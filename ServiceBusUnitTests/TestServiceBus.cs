@@ -90,11 +90,18 @@ namespace ServiceBusUnitTests
             QueueDescription description = ns.CreateQueue("testQueue");
             Assert.IsTrue(null != description);
 
-            if (!ns.QueueExists(name, out description))
-                Assert.Fail("Queue did not exist");
-            else
+            try
             {
-                Assert.IsTrue(null != description);
+                QueueDescription testQueue = ns.GetQueues().FirstOrDefault(e => e.Path.Equals("testQueue", StringComparison.InvariantCultureIgnoreCase));
+                Assert.IsNotNull(testQueue);
+            
+                if (!ns.QueueExists(name, out description))
+                    Assert.Fail("Queue did not exist");
+                else
+                    Assert.IsTrue(null != description);
+            }
+            finally
+            {
                 ns.DeleteQueue(name);
                 if (ns.QueueExists(name, out description))
                     Assert.Fail("Queue was not deleted");
@@ -109,11 +116,18 @@ namespace ServiceBusUnitTests
             TopicDescription description = ns.CreateTopic(name);
             Assert.IsTrue(null != description);
 
-            if (!ns.TopicExists(name, out description))
-                Assert.Fail("Topic did not exist");
-            else
+            try
             {
-                Assert.IsTrue(null != description);
+                TopicDescription testTopic2 = ns.GetTopics().FirstOrDefault(e => e.Path.Equals("testTopic2", StringComparison.InvariantCultureIgnoreCase));
+                Assert.IsNotNull(testTopic2);
+
+                if (!ns.TopicExists(name, out description))
+                    Assert.Fail("Topic did not exist");
+                else
+                    Assert.IsTrue(null != description);
+            }
+            finally
+            {
                 ns.DeleteTopic(name);
                 if (ns.TopicExists(name, out description))
                     Assert.Fail("Topic was not deleted");
