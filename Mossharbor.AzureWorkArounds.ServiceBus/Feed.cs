@@ -406,6 +406,14 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
         }
 
         /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("QueueDescription", Namespace = "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect")]
+        public QueueDescriptionXml QueueDescription { get; set; }
+
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("TopicDescription", Namespace = "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect")]
+        public TopicDescriptionXml TopicDescription { get; set; }
+
+        /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string type
         {

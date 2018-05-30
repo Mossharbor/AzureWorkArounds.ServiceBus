@@ -98,6 +98,44 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
             saddress = @"https://" + rootUri + path + "/ConsumerGroups/" + consumerGroup + "/Partitions/" + partition + "/?api-version=2017-04";
         }
 
+        private IEnumerable<T> GetFeedItems<T, TXml>(Func<string, TXml, T> entryCreator, Func<feedEntryContent, TXml> xmlSelector)
+        {
+            string address, saddress;
+            GetAddressesNeeded($"$Resources/{typeof(T).Name.Replace("Description", "")}s", out address, out saddress, true);
+            using (System.Net.WebClient request = new WebClient())
+            {
+                request.AddCommmonHeaders(provider, address);
+                var t = request.DownloadString(saddress);
+                System.Xml.Serialization.XmlSerializer xs = new System.Xml.Serialization.XmlSerializer(typeof(feed));
+                var feed = (feed)xs.Deserialize(new StringReader(t));
+
+                if (feed?.entry == null || 0 == feed.entry.Length)
+                    return new T[0];
+
+                T[] items = new T[feed.entry.Length];
+                for (int i = 0; i < items.Length; ++i)
+                {
+                    var entry = feed.entry[i];
+                    items[i] = entryCreator(entry.title.Value, xmlSelector(entry.content)); 
+                }
+                return items;
+            }
+        }
+
+        /// <summary>Retrieves an enumerable collection of all queues in the service namespace.</summary>
+        /// <returns>An object that represents the collection of all queues in the service namespace or returns an empty collection if no queue exists.</returns>
+        public IEnumerable<QueueDescription> GetQueues()
+        {
+            return GetFeedItems((p, x) => new QueueDescription(p, x), c => c.QueueDescription);
+        }
+
+        /// <summary>Retrieves an enumerable collection of topics in a service namespace.</summary>
+        /// <returns>An object that represents the collection of topics under the current namespaces or returns an empty collection if no topic exists.</returns>
+        public IEnumerable<TopicDescription> GetTopics()
+        {
+            return GetFeedItems((p, x) => new TopicDescription(p, x), c => c.TopicDescription);
+        }
+
         /// <summary>Determines whether a queue exists in the service namespace.</summary>
         /// <param name="path">The path of the queue relative to the service namespace base address.</param>
         /// <returns>true if a queue exists in the service namespace; otherwise, false.</returns>
