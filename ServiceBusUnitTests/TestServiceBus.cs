@@ -90,9 +90,29 @@ namespace ServiceBusUnitTests
             QueueDescription description = ns.CreateQueue("testQueue");
             Assert.IsTrue(null != description);
 
+            if (!ns.QueueExists(name, out description))
+                Assert.Fail("Queue did not exist");
+            else
+            {
+                Assert.IsTrue(null != description);
+                ns.DeleteQueue(name);
+                if (ns.QueueExists(name, out description))
+                    Assert.Fail("Queue was not deleted");
+            }
+        }
+
+
+        [TestMethod]
+        public void TestGetQueues()
+        {
+            string name = "TestGetQueues";
+            NamespaceManager ns = NamespaceManager.CreateFromConnectionString(serviceBusConnectionString);
+            QueueDescription description = ns.CreateQueue(name);
+            Assert.IsTrue(null != description);
+
             try
             {
-                QueueDescription testQueue = ns.GetQueues().FirstOrDefault(e => e.Path.Equals("testQueue", StringComparison.InvariantCultureIgnoreCase));
+                QueueDescription testQueue = ns.GetQueues().FirstOrDefault(e => e.Path.Equals(name, StringComparison.InvariantCultureIgnoreCase));
                 Assert.IsNotNull(testQueue);
             
                 if (!ns.QueueExists(name, out description))
