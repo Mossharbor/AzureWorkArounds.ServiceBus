@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Mossharbor.AzureWorkArounds.ServiceBus</id>
-    <version>1.0.14</version>
+    <version>1.0.15</version>
     <authors>M@ J.</authors>
     <owners>M@ J.</owners>
     <licenseUrl>https://raw.githubusercontent.com/Mossharbor/AzureWorkArounds.ServiceBus/master/LICENSE</licenseUrl>
@@ -10,7 +10,7 @@
     <!-- <iconUrl>http://ICON_URL_HERE_OR_DELETE_THIS_LINE</iconUrl> -->
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Implementations of missing dotnet core Azure Service Bus NamespaceManager functionality around Topics/Subscriptions, Relays and EventHubs.</description>
-    <releaseNotes>Added ability to create azure service bus relay.</releaseNotes>
+    <releaseNotes>Added GetQueues and Get Topic functionality</releaseNotes>
     <copyright>Copyright 2018 Mossharbor</copyright>
     <tags>ServiceBus dotnetcore Azure</tags>
   </metadata>
