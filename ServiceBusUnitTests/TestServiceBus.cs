@@ -237,5 +237,35 @@ namespace ServiceBusUnitTests
                 DeleteSafeTopic(ns, topicName);
             }
         }
+
+        [TestMethod]
+        public void TestSubscriptionRequiresSession()
+        {
+            string name = "TestSubscriptionRequiresSession";
+            string topicName = "TestSubscriptionRequiresSession";
+
+            NamespaceManager ns = NamespaceManager.CreateFromConnectionString(serviceBusConnectionString);
+
+            try
+            {
+                DeleteSafeTopic(ns, topicName);
+
+                TopicDescription tdescription = ns.CreateTopic(topicName);
+                SubscriptionDescription sdescription = new SubscriptionDescription(topicName, name);
+                sdescription.RequiresSession = false;
+                var outsd = ns.CreateSubscription(sdescription);
+                Assert.IsTrue(null != tdescription);
+                Assert.IsTrue(null != sdescription);
+                Assert.IsFalse(outsd.RequiresSession);
+
+                IEnumerable<SubscriptionDescription> suscriptions = ns.GetSubscriptions(topicName);
+                Assert.IsTrue(suscriptions.First().Name.Equals(name));
+            }
+            finally
+            {
+                DeleteSafeTopic(ns, topicName);
+            }
+
+        }
     }
 }
