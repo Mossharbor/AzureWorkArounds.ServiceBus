@@ -182,15 +182,15 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
 
         /// <summary>Gets or sets the value that indicates if a subscription has dead letter support when a message expires.</summary>
 		/// <value>true if a subscription has dead letter support when a message expires; otherwise, false.</value>
-        public bool DeadLetteringOnMessageExpiration
+        public bool EnableDeadLetteringOnMessageExpiration
         {
             get
             {
-                return this.xml.RequiresSession;
+                return this.xml.DeadLetteringOnMessageExpiration;
             }
             set
             {
-                this.xml.RequiresSession = value;
+                this.xml.DeadLetteringOnMessageExpiration = value;
             }
         }
         

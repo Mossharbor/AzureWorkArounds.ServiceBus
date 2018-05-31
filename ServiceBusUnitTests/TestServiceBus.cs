@@ -301,5 +301,42 @@ namespace ServiceBusUnitTests
             }
 
         }
+
+        [TestMethod]
+        public void TestSubscriptionEnableDeadLetteringOnMessageExpiration()
+        {
+            string name = "EnableDeadLetteringOnMessageExpiration";
+            string topicName = "EnableDeadLetteringOnMessageExpiration";
+
+            NamespaceManager ns = NamespaceManager.CreateFromConnectionString(serviceBusConnectionString);
+
+            try
+            {
+                DeleteSafeTopic(ns, topicName);
+
+                TopicDescription tdescription = ns.CreateTopic(topicName);
+                SubscriptionDescription sdescription = new SubscriptionDescription(topicName, name)
+                {
+                    RequiresSession = false,
+                    LockDuration = TimeSpan.FromMinutes(1),
+                    MaxDeliveryCount = 10,
+                    EnableDeadLetteringOnMessageExpiration = true,
+                    AutoDeleteOnIdle = TimeSpan.FromMinutes(5)
+                };
+                
+                var outsd = ns.CreateSubscription(sdescription);
+                Assert.IsTrue(null != tdescription);
+                Assert.IsTrue(null != sdescription);
+                Assert.IsFalse(outsd.RequiresSession);
+                Assert.IsTrue(outsd.EnableDeadLetteringOnMessageExpiration);
+
+                IEnumerable<SubscriptionDescription> suscriptions = ns.GetSubscriptions(topicName);
+                Assert.IsTrue(suscriptions.First().Name.Equals(name));
+            }
+            finally
+            {
+                DeleteSafeTopic(ns, topicName);
+            }
+        }
     }
 }
