@@ -24,6 +24,13 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
             this.xml = new RelayDescriptionXml(relayPath, type);
         }
 
+        /// <summary>Gets the <see cref="T:Microsoft.ServiceBus.Messaging.AuthorizationRules" />.</summary>
+		/// <value>The <see cref="T:Microsoft.ServiceBus.Messaging.AuthorizationRules" />.</value>
+		public AuthorizationRules Authorization
+        {
+            get{ return xml.Authorization; }
+        }
+
         /// <summary>Gets or sets the path of the relay.</summary>
 		/// <value>The path of the relay.</value>
         public string Path

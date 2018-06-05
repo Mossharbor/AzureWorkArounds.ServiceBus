@@ -212,7 +212,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
             }
         }
 
-        static IEnumerable<XElement> SimpleStreamAxis(XmlReader reader, string[] elementNames)
+        internal static IEnumerable<XElement> SimpleStreamAxis(XmlReader reader, string[] elementNames)
         {
             //using (XmlReader reader = XmlReader.Create(inputUrl))
             {

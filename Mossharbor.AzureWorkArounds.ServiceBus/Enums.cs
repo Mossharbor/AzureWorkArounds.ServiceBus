@@ -67,4 +67,16 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
         /// <summary>The NetOneway relay.</summary>
         NetOneway
     }
+
+    public enum AccessRights
+    {
+        /// <summary>The access right is Manage.</summary>
+        Manage,
+        /// <summary>The access right is Send.</summary>
+        Send,
+        /// <summary>The access right is Listen.</summary>
+        Listen,
+        /// <summary />
+        ManageNotificationHub
+    }
 }

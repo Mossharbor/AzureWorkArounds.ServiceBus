@@ -11,6 +11,70 @@ namespace ServiceBusUnitTests
     [TestClass]
     public class TestDescriptionsOperations
     {
+
+        [TestMethod]
+        public void GetHybridConnection()
+        {
+            string relayName = "GetHybridConnection";
+            var ns = NamespaceManager.CreateFromConnectionString(TestServiceBus.relayConnectionString);
+            try
+            {
+                ns.CreateHybridConnection(relayName);
+                HybridConnectionDescription initialDesc = ns.GetHybridConnection(relayName);
+            }
+            finally
+            {
+                ns.DeleteRelay(relayName);
+            }
+        }
+
+        [TestMethod]
+        public void HybridConnectionCreation()
+        {
+            string relayName = "GetHybridConnection";
+            var ns = NamespaceManager.CreateFromConnectionString(TestServiceBus.relayConnectionString);
+            try
+            {
+                ns.CreateHybridConnection(relayName);
+                Assert.IsTrue(ns.HybridConnectionExists(relayName));
+            }
+            finally
+            {
+                ns.DeleteRelay(relayName);
+            }
+        }
+
+        [TestMethod]
+        public void HybridConnectionWithAuthorization()
+        {
+            string relayName = "HybridConnectionWithAuthorization";
+            var ns = NamespaceManager.CreateFromConnectionString(TestServiceBus.relayConnectionString);
+            try
+            {
+                var relayDescription = new HybridConnectionDescription(relayName)
+                {
+                    RequiresClientAuthorization = true
+                };
+
+                var sendKey = SharedAccessAuthorizationRule.GenerateRandomKey();
+                var sendKeyName = "SendAccessKey";
+                var listenKey = SharedAccessAuthorizationRule.GenerateRandomKey();
+                var listenKeyName = "ListenAccessKey";
+
+                relayDescription.Authorization.Add(new SharedAccessAuthorizationRule(listenKeyName, listenKey,
+                new List<AccessRights> { AccessRights.Listen }));
+                relayDescription.Authorization.Add(new SharedAccessAuthorizationRule(sendKeyName, sendKey,
+                new List<AccessRights> { AccessRights.Send }));
+
+                ns.CreateHybridConnection(relayDescription);
+                Assert.IsTrue(ns.HybridConnectionExists(relayName));
+            }
+            finally
+            {
+                ns.DeleteHybridConnection(relayName);
+            }
+        }
+
         [TestMethod]
         public void RelayHttpCreation()
         {
@@ -34,6 +98,38 @@ namespace ServiceBusUnitTests
             try
             {
                 RelayDescription initialDesc = ns.CreateRelay(relayName, RelayType.NetTcp);
+            }
+            finally
+            {
+                ns.DeleteRelay(relayName);
+            }
+        }
+
+        [TestMethod]
+        public void RelayWithAuthorization()
+        {
+            string relayName = "RelayWithAuthorization";
+            var ns = NamespaceManager.CreateFromConnectionString(TestServiceBus.relayConnectionString);
+            try
+            {
+                var relayDescription = new RelayDescription(relayName, RelayType.Http)
+                {
+                    RequiresClientAuthorization = true,
+                    RequiresTransportSecurity = true
+                };
+
+                var sendKey = SharedAccessAuthorizationRule.GenerateRandomKey();
+                var sendKeyName = "SendAccessKey";
+                var listenKey = SharedAccessAuthorizationRule.GenerateRandomKey();
+                var listenKeyName = "ListenAccessKey";
+
+                relayDescription.Authorization.Add(new SharedAccessAuthorizationRule(listenKeyName, listenKey,
+                new List<AccessRights> { AccessRights.Listen }));
+                relayDescription.Authorization.Add(new SharedAccessAuthorizationRule(sendKeyName, sendKey,
+                new List<AccessRights> { AccessRights.Send }));
+
+                ns.CreateRelay(relayDescription);
+                Assert.IsTrue(ns.RelayExists(relayName));
             }
             finally
             {

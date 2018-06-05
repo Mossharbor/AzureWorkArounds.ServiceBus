@@ -144,6 +144,18 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
             }
         }
 
+        private AuthorizationRules authorization = null;
+        public AuthorizationRules Authorization
+        {
+            get
+            {
+                if (null == authorization)
+                    authorization = new AuthorizationRules();
+                return authorization;
+            }
+            set { authorization = value; }
+        }
+
         /// <remarks/>
         public bool RequiresClientAuthorization
         {
@@ -183,20 +195,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
                 this.publishToRegistryField = value;
             }
         }
-
-        /// <remarks/>
-        public object AuthorizationRules
-        {
-            get
-            {
-                return this.authorizationRulesField;
-            }
-            set
-            {
-                this.authorizationRulesField = value;
-            }
-        }
-
+        
         /// <remarks/>
         public bool IsDynamic
         {

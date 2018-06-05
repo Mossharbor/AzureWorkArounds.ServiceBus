@@ -1,18 +1,48 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <entry xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.w3.org/2005/Atom">
-  <id>uuid:e777249e9-4c1c-40b0-82e4-8d6e9b65b53d;id=1</id>
-  <title type="text">testcorrelationfilterb7c6c</title>
-  <updated>2018-05-11T06:31:20.2319704Z</updated>
+  <id>uuid:e8e10fa7b-dc1d-4163-b39f-8d30da1edd53;id=1</id>
+  <title type="text">RelayWithAuthorization</title>
+  <updated>2018-06-05T04:50:35.7519196Z</updated>
   <content type="application/xml">
-    <SubscriptionDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect">
-      <DefaultRuleDescription>
-        <Filter>
-          <Label>blah</Label>
-          <ReplyTo>x</ReplyTo>
-        </Filter>
-        <Action xsi:type="EmptyRuleAction" />
-        <Name>$Default</Name>
-      </DefaultRuleDescription>
-    </SubscriptionDescription>
+    <RelayDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect">
+      <Path>RelayWithAuthorization</Path>
+      <ListenerCount>0</ListenerCount>
+      <ListenerType>RelayedHttp</ListenerType>
+      <CreatedAt>0001-01-01T00:00:00</CreatedAt>
+      <UpdatedAt>0001-01-01T00:00:00</UpdatedAt>
+      <RelayType>Http</RelayType>
+      <Authorization>
+        <AuthorizationRule>
+          <ClaimType>SharedAccessKey</ClaimType>
+          <ClaimValue>None</ClaimValue>
+          <CreatedTime>2018-06-05T04:50:35.7190076Z</CreatedTime>
+          <ModifiedTime>2018-06-05T04:50:35.7190076Z</ModifiedTime>
+          <Revision>0</Revision>
+          <KeyName>ListenAccessKey</KeyName>
+          <Rights>
+            <AccessRights>Listen</AccessRights>
+          </Rights>
+          <PrimaryKey>WHNWKVLVpEy0X3oCWg1CB12QByojkkW37UpyB4ADXmE=</PrimaryKey>
+          <SecondaryKey>oQ/s80FP/EUxVszPFAQUPVim3jHCaLkSWVsrSZoHexA=</SecondaryKey>
+        </AuthorizationRule>
+        <AuthorizationRule>
+          <ClaimType>SharedAccessKey</ClaimType>
+          <ClaimValue>None</ClaimValue>
+          <CreatedTime>2018-06-05T04:50:35.7479306Z</CreatedTime>
+          <ModifiedTime>2018-06-05T04:50:35.7479306Z</ModifiedTime>
+          <Revision>0</Revision>
+          <KeyName>SendAccessKey</KeyName>
+          <Rights>
+            <AccessRights>Send</AccessRights>
+          </Rights>
+          <PrimaryKey>3khB8DGUBWFwh56KeLOraO5/4W040kS3bTWeEnb9P9k=</PrimaryKey>
+          <SecondaryKey>29Lnqnu9lUuGYo9rrEypj356oZRa2R3jbPCEvQs5y64=</SecondaryKey>
+        </AuthorizationRule>
+      </Authorization>
+      <RequiresClientAuthorization>true</RequiresClientAuthorization>
+      <RequiresTransportSecurity>true</RequiresTransportSecurity>
+      <PublishToRegistry>false</PublishToRegistry>
+      <IsDynamic>false</IsDynamic>
+    </RelayDescription>
   </content>
 </entry>

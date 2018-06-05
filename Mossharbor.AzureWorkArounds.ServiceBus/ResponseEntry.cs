@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
+using System.Xml.Serialization;
 
 namespace Mossharbor.AzureWorkArounds.ServiceBus
 {
@@ -39,9 +40,10 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
                 Encoding = Encoding.UTF8
             };
 
+            Type[] types = new Type[] { typeof(Mossharbor.AzureWorkArounds.ServiceBus.SharedAccessAuthorizationRule), typeof(Mossharbor.AzureWorkArounds.ServiceBus.AuthorizationRule) };
             Utf8StringWriter sw = new Utf8StringWriter();
             XmlWriter xw = XmlWriter.Create(sw, xmlWriterSettings);
-            System.Xml.Serialization.XmlSerializer xs = new System.Xml.Serialization.XmlSerializer(typeof(entry));
+            System.Xml.Serialization.XmlSerializer xs = new System.Xml.Serialization.XmlSerializer(typeof(entry), types);
             xs.Serialize(xw, this);
             return sw.ToString();
         }
@@ -279,6 +281,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
         private PartitionDescription partitionDescriptionField;
         private RuleDescription[] ruleDescriptionField;
         private RelayDescriptionXml relayDescriptionXmlField;
+        private HybridConnectionDescriptionXml hybridConnectionDescription;
 
         private string typeField = "application/xml";
 
@@ -375,6 +378,20 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
             set
             {
                 this.relayDescriptionXmlField = value;
+            }
+        }
+
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Namespace = "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect")]
+        public HybridConnectionDescriptionXml HybridConnectionDescription
+        {
+            get
+            {
+                return this.hybridConnectionDescription;
+            }
+            set
+            {
+                this.hybridConnectionDescription = value;
             }
         }
 

@@ -1,24 +1,50 @@
 ﻿<entry xmlns="http://www.w3.org/2005/Atom">
-  <id>https://telegraphytest.servicebus.windows.net/foo/?api-version=2017-04</id>
-  <title type="text">foo</title>
-  <published>2018-05-23T05:48:54Z</published>
-  <updated>2018-05-23T05:48:54Z</updated>
+  <id>https://telagraphytest.servicebus.windows.net/test2/?api-version=2017-04</id>
+  <title type="text">test2</title>
+  <published>2018-06-05T04:35:59Z</published>
+  <updated>2018-06-05T04:35:59Z</updated>
   <author>
-    <name>telegraphytest</name>
+    <name>telagraphytest</name>
   </author>
-  <link rel="self" href="https://telegraphytest.servicebus.windows.net/foo/?api-version=2017-04"/>
+  <link rel="self" href="https://telagraphytest.servicebus.windows.net/test2/?api-version=2017-04"/>
   <content type="application/xml">
     <RelayDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
-      <Path>foo</Path>
+      <Path>test2</Path>
       <ListenerType>RelayedHttp</ListenerType>
-      <CreatedAt>2018-05-23T05:48:54.1278061Z</CreatedAt>
-      <UpdatedAt>2018-05-23T05:48:54.1278061Z</UpdatedAt>
+      <CreatedAt>2018-06-05T04:35:59.5182068Z</CreatedAt>
+      <UpdatedAt>2018-06-05T04:35:59.5182068Z</UpdatedAt>
       <RelayType>Http</RelayType>
       <RequiresClientAuthorization>true</RequiresClientAuthorization>
       <RequiresTransportSecurity>true</RequiresTransportSecurity>
       <PublishToRegistry>false</PublishToRegistry>
-      <AuthorizationRules></AuthorizationRules>
+      <AuthorizationRules>
+        <AuthorizationRule i:type="SharedAccessAuthorizationRule">
+          <ClaimType>SharedAccessKey</ClaimType>
+          <ClaimValue>None</ClaimValue>
+          <Rights>
+            <AccessRights>Listen</AccessRights>
+          </Rights>
+          <CreatedTime>2018-06-05T04:35:51.2773838Z</CreatedTime>
+          <ModifiedTime>2018-06-05T04:35:51.2773838Z</ModifiedTime>
+          <KeyName>ListenAccessKey</KeyName>
+          <PrimaryKey>KH1lTpPOoBsZhv1xe5i5VJVXNicCBer1/TwMVmeSmi8=</PrimaryKey>
+          <SecondaryKey>WRoiyjP3xqn4bKVV1ncnT2O32XN1v8ztcoWTdHPll/A=</SecondaryKey>
+        </AuthorizationRule>
+        <AuthorizationRule i:type="SharedAccessAuthorizationRule">
+          <ClaimType>SharedAccessKey</ClaimType>
+          <ClaimValue>None</ClaimValue>
+          <Rights>
+            <AccessRights>Send</AccessRights>
+          </Rights>
+          <CreatedTime>2018-06-05T04:35:51.32725Z</CreatedTime>
+          <ModifiedTime>2018-06-05T04:35:51.32725Z</ModifiedTime>
+          <KeyName>SendAccessKey</KeyName>
+          <PrimaryKey>PDfV1cA1CQXVq7tE0Of4UH6uk5bjMl2BgV0cS37JR5M=</PrimaryKey>
+          <SecondaryKey>bKyS4XPgw4Ek8/janrfMQ0mS8RT5TfxMq6bdTk8FuWU=</SecondaryKey>
+        </AuthorizationRule>
+      </AuthorizationRules>
       <IsDynamic>false</IsDynamic>
     </RelayDescription>
   </content>
 </entry>
+0
