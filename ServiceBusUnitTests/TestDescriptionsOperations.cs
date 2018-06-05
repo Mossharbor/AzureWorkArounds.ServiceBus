@@ -51,6 +51,7 @@ namespace ServiceBusUnitTests
             var ns = NamespaceManager.CreateFromConnectionString(TestServiceBus.relayConnectionString);
             try
             {
+                //https://www.codit.eu/blog/2014/12/securing-azure-service-bus-relay-endpoints-with-sharedaccesssignatures/
                 var relayDescription = new HybridConnectionDescription(relayName)
                 {
                     RequiresClientAuthorization = true
