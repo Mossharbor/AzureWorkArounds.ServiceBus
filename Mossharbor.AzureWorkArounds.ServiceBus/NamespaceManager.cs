@@ -98,10 +98,8 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
             saddress = @"https://" + rootUri + path + "/ConsumerGroups/" + consumerGroup + "/Partitions/" + partition + "/?api-version=2017-04";
         }
 
-        private IEnumerable<T> GetFeedItems<T, TXml>(Func<string, TXml, T> entryCreator, Func<feedEntryContent, TXml> xmlSelector)
+        private IEnumerable<T> GetFeedItems<T, TXml>(string address, string saddress, Func<string, TXml, T> entryCreator, Func<feedEntryContent, TXml> xmlSelector)
         {
-            string address, saddress;
-            GetAddressesNeeded($"$Resources/{typeof(T).Name.Replace("Description", "")}s", out address, out saddress, true);
             using (System.Net.WebClient request = new WebClient())
             {
                 request.AddCommmonHeaders(provider, address);
@@ -126,14 +124,18 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
         /// <returns>An object that represents the collection of all queues in the service namespace or returns an empty collection if no queue exists.</returns>
         public IEnumerable<QueueDescription> GetQueues()
         {
-            return GetFeedItems((p, x) => new QueueDescription(p, x), c => c.QueueDescription);
+            string address, saddress;
+            GetAddressesNeeded("$Resources/Queues", out address, out saddress, true);
+            return GetFeedItems(address, saddress, (p, x) => new QueueDescription(p, x), c => c.QueueDescription);
         }
 
         /// <summary>Retrieves an enumerable collection of topics in a service namespace.</summary>
         /// <returns>An object that represents the collection of topics under the current namespaces or returns an empty collection if no topic exists.</returns>
         public IEnumerable<TopicDescription> GetTopics()
         {
-            return GetFeedItems((p, x) => new TopicDescription(p, x), c => c.TopicDescription);
+            string address, saddress;
+            GetAddressesNeeded("$Resources/Topics", out address, out saddress, true);
+            return GetFeedItems(address, saddress, (p, x) => new TopicDescription(p, x), c => c.TopicDescription);
         }
 
         /// <summary>Determines whether a queue exists in the service namespace.</summary>
@@ -579,32 +581,11 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
             CheckNameLength(subscriptionName, MAXNAMELENGTH, "description.Name");
             string address, saddress;
             GetTopicFeedQueryAddresses(topicName, subscriptionName, out address, out saddress);
-
-            using (System.Net.WebClient request = new WebClient())
-            {
-                request.AddCommmonHeaders(provider, address, true, false);
-                var t = request.DownloadString(saddress);
-                System.Xml.Serialization.XmlSerializer xs = new System.Xml.Serialization.XmlSerializer(typeof(feed));
-                var feed = (feed)xs.Deserialize(new StringReader(t));
-
-                if (null == feed || null == feed.entry || 0 == feed.entry.Length || null == feed?.entry[0].content?.RuleDescription)
-                    return new RuleDescription[0];
-
-                RuleDescription[] toReturn = new RuleDescription[feed.entry.Length];
-
-                for (int i = 0; i < toReturn.Length; ++i)
-                {
-                    //string path = feed?.entry[i].title.Value;
-                    //string path = feed?.entry?.content?.SubscriptionDescription[i].Name;
-                    toReturn[i] = feed.entry[i].content.RuleDescription[0];
-                }
-
-                return toReturn;
-            }
+            return GetFeedItems(address, saddress, (p, x) => x, c => c.RuleDescription);
         }
 
         /// <summary>Retrieves an enumerable collection of all subscriptions in the service namespace.</summary>
-        /// <param name="topicPath">The path of the topic relative to the service namespace base address.</param>
+        /// <param name="topicName">The path of the topic relative to the service namespace base address.</param>
         /// <returns>An 
         /// <see cref="T:System.Collections.Generic.IEnumerable`1" /> object that represents the collection of all subscriptions in the service namespace or returns an empty collection if no subscription exists.</returns> 
         public IEnumerable<SubscriptionDescription> GetSubscriptions(string topicName)
@@ -612,28 +593,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
             CheckNameLength(topicName, MAXPATHLENGTH, "description.Path");
             string address, saddress;
             GetTopicFeedQueryAddresses(topicName, null, out address, out saddress);
-
-            using (System.Net.WebClient request = new WebClient())
-            {
-                request.AddCommmonHeaders(provider, address, true, false);
-                var t = request.DownloadString(saddress);
-                System.Xml.Serialization.XmlSerializer xs = new System.Xml.Serialization.XmlSerializer(typeof(feed));
-                var feed = (feed)xs.Deserialize(new StringReader(t));
-
-                if (null == feed || null == feed.entry || 0 == feed.entry.Length || null == feed?.entry[0].content?.SubscriptionDescription)
-                    return new SubscriptionDescription[0];
-
-                SubscriptionDescription[] toReturn = new SubscriptionDescription[feed.entry.Length];
-
-                for(int i=0; i < toReturn.Length; ++i)
-                {
-                    string path = feed?.entry[i].title.Value;
-                    //string path = feed?.entry?.content?.SubscriptionDescription[i].Name;
-                    toReturn[i] = new SubscriptionDescription(topicName, path, feed.entry[i].content.SubscriptionDescription[i]);
-                }
-
-                return toReturn;
-            }
+            return GetFeedItems(address, saddress, (p, x) => new SubscriptionDescription(topicName, p, x), c => c.SubscriptionDescription);
         }
 
         /// <summary>Retrieves an enumerable collection of all rules in the 

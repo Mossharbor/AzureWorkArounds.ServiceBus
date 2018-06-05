@@ -371,39 +371,13 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://www.w3.org/2005/Atom")]
     public partial class feedEntryContent
     {
-
-        private RuleDescription[] ruleDescriptionField;
-        private SubscriptionDescriptionXml[] subscriptionDescriptionField;
-
-        private string typeField;
-
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("RuleDescription", Namespace = "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect")]
-        public RuleDescription[] RuleDescription
-        {
-            get
-            {
-                return this.ruleDescriptionField;
-            }
-            set
-            {
-                this.ruleDescriptionField = value;
-            }
-        }
+        public RuleDescription RuleDescription { get; set; }
 
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("SubscriptionDescription", Namespace = "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect")]
-        public SubscriptionDescriptionXml[] SubscriptionDescription
-        {
-            get
-            {
-                return this.subscriptionDescriptionField;
-            }
-            set
-            {
-                this.subscriptionDescriptionField = value;
-            }
-        }
+        public SubscriptionDescriptionXml SubscriptionDescription { get; set; }
 
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("QueueDescription", Namespace = "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect")]
@@ -415,17 +389,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
 
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string type
-        {
-            get
-            {
-                return this.typeField;
-            }
-            set
-            {
-                this.typeField = value;
-            }
-        }
+        public string type { get; set; }
     }
 
     /// <remarks/>
