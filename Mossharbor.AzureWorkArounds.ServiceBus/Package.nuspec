@@ -2,15 +2,15 @@
 <package >
   <metadata>
     <id>Mossharbor.AzureWorkArounds.ServiceBus</id>
-    <version>1.0.16</version>
+    <version>1.0.17</version>
     <authors>M@ J.</authors>
     <owners>M@ J.</owners>
     <licenseUrl>https://raw.githubusercontent.com/Mossharbor/AzureWorkArounds.ServiceBus/master/LICENSE</licenseUrl>
     <projectUrl>https://github.com/Mossharbor/AzureWorkArounds.ServiceBus</projectUrl>
     <!-- <iconUrl>http://ICON_URL_HERE_OR_DELETE_THIS_LINE</iconUrl> -->
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>Implementations of missing dotnet core Azure Service Bus NamespaceManager functionality around Topics/Subscriptions, Relays and EventHubs.</description>
-    <releaseNotes>Fixed issues with RequiresSession and EnableDeadLetteringOnMessageExpiration corrupting one another</releaseNotes>
+    <description>Implementations of missing dotnet core Azure Service Bus NamespaceManager functionality around Topics/Subscriptions, Relays, Hybrid Connections and EventHubs.</description>
+    <releaseNotes>Added support for relay authorization rules and hybrid connection creation</releaseNotes>
     <copyright>Copyright 2018 Mossharbor</copyright>
     <tags>ServiceBus dotnetcore Azure</tags>
   </metadata>
