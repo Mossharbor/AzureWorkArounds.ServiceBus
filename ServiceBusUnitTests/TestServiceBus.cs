@@ -181,6 +181,36 @@ namespace ServiceBusUnitTests
         }
 
         [TestMethod]
+        public void TestGetMoreThanOneSubscription()
+        {
+            string name1 = "testSubscription1";
+            string name2 = "testSubscription2";
+            string topicName = "TestGetMoreThanOneSubscription";
+
+            NamespaceManager ns = NamespaceManager.CreateFromConnectionString(serviceBusConnectionString);
+
+            try
+            {
+                DeleteSafeTopic(ns, topicName);
+
+                TopicDescription tdescription = ns.CreateTopic(topicName);
+                Assert.IsTrue(null != tdescription);
+                SubscriptionDescription sdescription1 = ns.CreateSubscription(topicName, name1);
+                Assert.IsTrue(null != sdescription1);
+                SubscriptionDescription sdescription2 = ns.CreateSubscription(topicName, name2);
+                Assert.IsTrue(null != sdescription2);
+
+                IEnumerable<SubscriptionDescription> suscriptions = ns.GetSubscriptions(topicName);
+                Assert.IsTrue(suscriptions.ElementAt(0).Name.Equals(name1));
+                Assert.IsTrue(suscriptions.ElementAt(1).Name.Equals(name2));
+            }
+            finally
+            {
+                DeleteSafeTopic(ns, topicName);
+            }
+        }
+
+        [TestMethod]
         public void TestGetRules()
         {
             string topicName = "TestGetRules";
