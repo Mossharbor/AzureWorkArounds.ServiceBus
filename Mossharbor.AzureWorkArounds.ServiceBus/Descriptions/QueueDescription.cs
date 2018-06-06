@@ -188,11 +188,8 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
         }
 
         /// <remarks/>
-        public QueueDescriptionCountDetails CountDetails
-        {
-            get { return new QueueDescriptionCountDetails(xml.CountDetails); }
-        }
-        
+        public CountDetails CountDetails => new CountDetails(xml.CountDetails);
+
         /// <summary>Gets or sets the 
 		/// <see cref="T:System.TimeSpan" /> idle interval after which the queue is automatically deleted. The minimum duration is 5 minutes.</summary> 
 		/// <value>The auto delete on idle time span for the queue.</value>
@@ -251,49 +248,6 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
         {
             get { return xml.EnableExpress; }
             set { xml.EnableExpress = value; }
-        }
-    }
-
-    /// <remarks/>
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect")]
-    public partial class QueueDescriptionCountDetails
-    {
-        QueueDescriptionCountDetailsXml xml;
-        internal QueueDescriptionCountDetails(QueueDescriptionCountDetailsXml xml)
-        {
-            this.xml = xml;
-        }
-
-        /// <remarks/>
-        public long ActiveMessageCount
-        {
-            get { return xml.ActiveMessageCount; }
-        }
-
-        /// <remarks/>
-        public long DeadLetterMessageCount
-        {
-            get { return xml.DeadLetterMessageCount; }
-        }
-
-        /// <remarks/>
-        public long ScheduledMessageCount
-        {
-            get { return xml.ScheduledMessageCount; }
-        }
-
-        /// <remarks/>
-        public long TransferMessageCount
-        {
-            get { return xml.ScheduledMessageCount; }
-        }
-
-        /// <remarks/>
-        public long TransferDeadLetterMessageCount
-        {
-            get { return xml.ScheduledMessageCount; }
         }
     }
 }

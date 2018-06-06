@@ -359,6 +359,12 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
         [System.Xml.Serialization.XmlIgnore]
         public bool AccessedAtSpecified { get { return false; } }
 
+        /// <remarks/>
+        public CountDetailsXml CountDetails { get; set; }
+        
+        [System.Xml.Serialization.XmlIgnore]
+        public bool CountDetailsSpecified => false;
+
         [System.Xml.Serialization.XmlElementAttribute("AutoDeleteOnIdle", DataType = "duration")]
         public string AutoDeleteOnIdleTimeSpanString
         {
