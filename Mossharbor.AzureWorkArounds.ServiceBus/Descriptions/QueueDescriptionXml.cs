@@ -88,8 +88,6 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
 
         private string userMetadataField;
 
-        private QueueDescriptionCountDetailsXml countDetailsField;
-
         private TimeSpan? autoDeleteOnIdleField;
 
         private bool enablePartitioningField = false;
@@ -556,21 +554,11 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
         }
 
         /// <remarks/>
-        public QueueDescriptionCountDetailsXml CountDetails
-        {
-            get
-            {
-                return this.countDetailsField;
-            }
-            set
-            {
-                this.countDetailsField = value;
-            }
-        }
+        public CountDetailsXml CountDetails { get; set; }
         
         [System.Xml.Serialization.XmlIgnore]
-        public bool CountDetailsSpecified { get { return false; } }
-        
+        public bool CountDetailsSpecified => false;
+
         [System.Xml.Serialization.XmlElementAttribute("AutoDeleteOnIdle", DataType = "duration")]
         public string AutoDeleteOnIdleTimeSpanString
         {
@@ -723,93 +711,5 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
 
         [System.Xml.Serialization.XmlIgnore]
         public bool EnableExpressSpecified { get; set; }
-    }
-
-    /// <remarks/>
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect")]
-    public partial class QueueDescriptionCountDetailsXml
-    {
-
-        private long activeMessageCountField;
-
-        private long deadLetterMessageCountField;
-
-        private long scheduledMessageCountField;
-
-        private long transferMessageCountField;
-
-        private long transferDeadLetterMessageCountField;
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Namespace = "http://schemas.microsoft.com/netservices/2011/06/servicebus")]
-        public long ActiveMessageCount
-        {
-            get
-            {
-                return this.activeMessageCountField;
-            }
-            set
-            {
-                this.activeMessageCountField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Namespace = "http://schemas.microsoft.com/netservices/2011/06/servicebus")]
-        public long DeadLetterMessageCount
-        {
-            get
-            {
-                return this.deadLetterMessageCountField;
-            }
-            set
-            {
-                this.deadLetterMessageCountField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Namespace = "http://schemas.microsoft.com/netservices/2011/06/servicebus")]
-        public long ScheduledMessageCount
-        {
-            get
-            {
-                return this.scheduledMessageCountField;
-            }
-            set
-            {
-                this.scheduledMessageCountField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Namespace = "http://schemas.microsoft.com/netservices/2011/06/servicebus")]
-        public long TransferMessageCount
-        {
-            get
-            {
-                return this.transferMessageCountField;
-            }
-            set
-            {
-                this.transferMessageCountField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Namespace = "http://schemas.microsoft.com/netservices/2011/06/servicebus")]
-        public long TransferDeadLetterMessageCount
-        {
-            get
-            {
-                return this.transferDeadLetterMessageCountField;
-            }
-            set
-            {
-                this.transferDeadLetterMessageCountField = value;
-            }
-        }
     }
 }

@@ -234,6 +234,9 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
             }
         }
         
+        /// <remarks/>
+        public CountDetails CountDetails => new CountDetails(xml.CountDetails);
+        
         /// <summary>Gets or sets the 
         /// <see cref="T:System.TimeSpan" /> idle interval after which the queue is automatically deleted. The minimum duration is 5 minutes.</summary> 
         /// <value>The auto delete on idle time span for the queue.</value>
