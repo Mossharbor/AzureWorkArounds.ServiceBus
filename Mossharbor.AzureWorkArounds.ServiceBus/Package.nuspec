@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Mossharbor.AzureWorkArounds.ServiceBus</id>
-    <version>1.0.18</version>
+    <version>1.0.19</version>
     <authors>M@ J.</authors>
     <owners>M@ J.</owners>
     <licenseUrl>https://raw.githubusercontent.com/Mossharbor/AzureWorkArounds.ServiceBus/master/LICENSE</licenseUrl>
@@ -10,7 +10,7 @@
     <!-- <iconUrl>http://ICON_URL_HERE_OR_DELETE_THIS_LINE</iconUrl> -->
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Implementations of missing dotnet core Azure Service Bus NamespaceManager functionality around Topics/Subscriptions, Relays, Hybrid Connections and EventHubs.</description>
-    <releaseNotes>Fixed issue with out of range exception when we have multiple subscriptions on a topic</releaseNotes>
+    <releaseNotes>Added description Count for Subscriptions</releaseNotes>
     <copyright>Copyright 2018 Mossharbor</copyright>
     <tags>ServiceBus dotnetcore Azure</tags>
   </metadata>
