@@ -24,7 +24,7 @@ namespace ServiceBusUnitTests
             }
             finally
             {
-                ns.DeleteRelay(relayName);
+                ns.DeleteHybridConnection(relayName);
             }
         }
 
@@ -40,7 +40,26 @@ namespace ServiceBusUnitTests
             }
             finally
             {
-                ns.DeleteRelay(relayName);
+                ns.DeleteHybridConnection(relayName);
+            }
+        }
+
+        [TestMethod]
+        public void TestHybridConnectionExits()
+        {
+            string relayName = "GetHybridConnection";
+            var ns = NamespaceManager.CreateFromConnectionString(TestServiceBus.relayConnectionString);
+            try { ns.DeleteHybridConnection(relayName); } catch (Exception) { }
+            try
+            {
+                HybridConnectionDescription hd = null;
+                Assert.IsFalse(ns.HybridConnectionExists(relayName, out hd));
+                ns.CreateHybridConnection(relayName);
+                Assert.IsTrue(ns.HybridConnectionExists(relayName));
+            }
+            finally
+            {
+                ns.DeleteHybridConnection(relayName);
             }
         }
 
