@@ -144,7 +144,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
         {
             get
             {
-                return this.xml.CreatedAt;
+                return this.xml.UpdatedAt;
             }
         }
         /// <remarks/>
@@ -152,7 +152,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
         {
             get
             {
-                return this.xml.CreatedAt;
+                return this.xml.AccessedAt;
             }
         }
         /// <remarks/>
