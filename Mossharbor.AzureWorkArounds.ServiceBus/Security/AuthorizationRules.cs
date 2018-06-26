@@ -11,6 +11,7 @@ using System.Xml.Serialization;
 
 namespace Mossharbor.AzureWorkArounds.ServiceBus
 {
+    [Serializable]
     public class AuthorizationRules : ICollection<AuthorizationRule>, IEnumerable<AuthorizationRule>, IEnumerable, IXmlSerializable
     {
         [XmlIgnore]

@@ -4,6 +4,7 @@ using System.Text;
 
 namespace Mossharbor.AzureWorkArounds.ServiceBus
 {
+    [Serializable]
     public enum EntityStatus
     {
         /// <summary>The status of the messaging entity is active.</summary>

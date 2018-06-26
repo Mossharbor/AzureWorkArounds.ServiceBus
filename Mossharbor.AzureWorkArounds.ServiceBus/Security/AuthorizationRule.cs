@@ -8,6 +8,7 @@ using System.Xml.Serialization;
 
 namespace Mossharbor.AzureWorkArounds.ServiceBus
 {
+    [Serializable]
     public abstract class AuthorizationRule
     {
         public AuthorizationRule()

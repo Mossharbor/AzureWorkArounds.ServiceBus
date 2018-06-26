@@ -6,6 +6,7 @@ using System.Text;
 
 namespace Mossharbor.AzureWorkArounds.ServiceBus
 {
+    [Serializable]
     internal class SharedAccessSignatureTokenProvider
     {
         internal readonly static TimeSpan DefaultTokenTimeout = TimeSpan.FromMinutes(60);

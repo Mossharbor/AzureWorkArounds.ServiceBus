@@ -10,13 +10,14 @@ using System.Threading.Tasks;
 namespace Mossharbor.AzureWorkArounds.ServiceBus
 {
     /// <summary>Represents an anchor class used in managing entities, such as queues, topics, subscriptions, and rules, in your 
-	/// service namespace. You must provide service namespace address and access credentials in order to manage your service namespace.</summary> 
-	/// <example>
-	/// <code>
-	///  NamespaceManagerSettings nsSettings = new NamespaceManagerSettings(); // with credentials and operation timeout
-	///  NamespaceManager manager = new NamespaceManager(new Uri("baseUri"), nsSettings);
-	/// </code>
-	/// </example>
+    /// service namespace. You must provide service namespace address and access credentials in order to manage your service namespace.</summary> 
+    /// <example>
+    /// <code>
+    ///  NamespaceManagerSettings nsSettings = new NamespaceManagerSettings(); // with credentials and operation timeout
+    ///  NamespaceManager manager = new NamespaceManager(new Uri("baseUri"), nsSettings);
+    /// </code>
+    /// </example>
+    [Serializable]
     public class NamespaceManager
     {
         static readonly int MAXPATHLENGTH = 260;

@@ -12,6 +12,7 @@ namespace Mossharbor.AzureWorkArounds.ServiceBus
     using System.Xml;
     using System.Xml.Serialization;
 
+    [Serializable]
     static class WebClientExtensions
     {
         private const string userAgentTemplate = "SERVICEBUS/2017-04(api-origin=DotNetSdk;os={0};os-version={1})";
